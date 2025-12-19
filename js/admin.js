@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // 🔐 SEND OTP AFTER LOGIN
-  await sendOtp(session.user.email);
+  // // 🔐 SEND OTP AFTER LOGIN
+  // await sendOtp(session.user.email);
 
-  // Show OTP screen instead of dashboard
-  document.getElementById("otpSection").style.display = "block";
-  document.getElementById("adminSection").style.display = "none";
+  // // Show OTP screen instead of dashboard
+  // document.getElementById("otpSection").style.display = "block";
+  // document.getElementById("adminSection").style.display = "none";
   // Logout
   document.getElementById("logoutBtn").onclick = async () => {
     await supabaseClient.auth.signOut();
@@ -69,42 +69,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   fetchData();
 });
 
-async function sendOtp(email) {
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-    },
-  });
+// async function sendOtp(email) {
+//   const { error } = await supabaseClient.auth.signInWithOtp({
+//     email,
+//     options: {
+//       shouldCreateUser: false,
+//     },
+//   });
 
-  if (error) {
-    console.error("OTP send failed:", error.message);
-    alert("Failed to send OTP");
-  } else {
-    alert("OTP sent to your email");
-  }
-}
-async function verifyOtp() {
-  const otp = document.getElementById("otpInput").value;
-  const {
-    data: { session },
-    error,
-  } = await supabaseClient.auth.verifyOtp({
-    token: otp,
-    type: "email",
-  });
-
-  if (error) {
-    alert("Invalid OTP");
-    return;
-  }
-
-  // OTP verified → allow admin access
-  document.getElementById("otpSection").style.display = "none";
-  document.getElementById("adminSection").style.display = "block";
-
-  fetchData(); // load admin data
-}
+//   if (error) {
+//     console.error("OTP send failed:", error.message);
+//     alert("Failed to send OTP");
+//   } else {
+//     alert("OTP sent to your email");
+//   }
+// }
 
 // ================================
 // FETCH DATA
