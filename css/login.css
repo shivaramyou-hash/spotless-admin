@@ -1,0 +1,152 @@
+/* ===============================
+   PREMIUM LOGIN UI
+================================ */
+
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+/* BACKGROUND */
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("../img/ui/bg.png") center / cover no-repeat;
+  z-index: -1;
+}
+
+/* CENTER WRAPPER */
+.login-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* CARD */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px 35px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.18);
+  animation: fadeUp 0.6s ease;
+}
+
+/* LOGO */
+.login-logo-wrap {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-logo-wrap img {
+  width: 170px;
+}
+
+/* TEXT */
+.login-title {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  text-align: center;
+  opacity: 0.65;
+  margin-bottom: 30px;
+}
+
+/* INPUTS */
+.login-input {
+  margin-bottom: 20px;
+}
+
+.mil-input-frame {
+  position: relative;
+}
+
+.mil-input-frame input {
+  width: 100%;
+  height: 52px;
+  padding: 0 50px 0 18px;
+  border-radius: 14px;
+  font-size: 15px;
+}
+
+.mil-input-frame i {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+/* ACTIONS */
+.login-actions {
+  text-align: right;
+  margin-bottom: 25px;
+}
+
+/* BUTTON WRAPPER */
+.login-btn-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+/* BUTTON */
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  height: 52px;
+  padding: 0 40px;
+
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  border-radius: 999px;
+  transition: all 0.3s ease;
+}
+
+/* BUTTON ICON */
+.login-btn i {
+  font-size: 14px;
+}
+
+/* HOVER EFFECT */
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 22px;
+  }
+
+  .login-title {
+    font-size: 26px;
+  }
+}

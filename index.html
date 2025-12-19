@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Spotless Mauritius</title>
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="css/plugins/bootstrap-grid.css" />
+    <link rel="stylesheet" href="css/plugins/fontawesome.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Login CSS -->
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+
+  <body>
+    <section class="login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <!-- LOGO -->
+          <div class="login-logo-wrap">
+            <img src="img/ui/logo2.png" alt="Logo" />
+          </div>
+
+          <!-- TITLE -->
+          <h2 class="login-title">Welcome Back</h2>
+          <p class="login-subtitle">Login to your account</p>
+
+          <!-- FORM -->
+          <form id="loginForm">
+            <div class="mil-input-frame login-input">
+              <input
+                type="email"
+                id="email"
+                placeholder="Email address"
+                required
+              />
+              <i class="far fa-envelope"></i>
+            </div>
+
+            <div class="mil-input-frame login-input">
+              <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                required
+              />
+              <i class="far fa-lock"></i>
+            </div>
+
+            <div class="login-actions">
+              <a href="#" class="mil-text-link">Forgot password?</a>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="login-btn-wrap">
+              <button
+                type="submit"
+                class="mil-btn mil-bg-a-1 mil-br-xl login-btn"
+              >
+                Login <i class="far fa-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+
+          <!-- ERROR MESSAGE -->
+          <p
+            id="loginError"
+            style="color: #e63946; text-align: center; margin-top: 15px"
+          ></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Supabase JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Login Script -->
+    <script src="js/login.js"></script>
+  </body>
+</html>
