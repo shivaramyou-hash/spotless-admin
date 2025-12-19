@@ -60,12 +60,15 @@
       <div class="table-container">
         <!-- SEARCH + FILTER -->
         <div class="top-bar">
-          <input
-            type="text"
-            id="searchInput"
-            class="search-input"
-            placeholder="Search by name or email..."
-          />
+          <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Search by name or email..."
+            />
+          </div>
 
           <div class="filter-buttons">
             <button class="filter-btn active" data-filter="All">All</button>
@@ -102,6 +105,8 @@
         </table>
       </div>
     </div>
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
 
     <script src="../js/admin.js"></script>
   </body>
