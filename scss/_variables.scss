@@ -1,0 +1,88 @@
+/* -------------------------------------------
+
+fonts
+
+------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Monoton&family=Outfit:wght@100..900&family=Reenie+Beanie&display=swap");
+
+$font-1: "Outfit", sans-serif;
+
+$font-2: "Reenie Beanie", cursive;
+
+$font-3: "Monoton", serif;
+
+/* -------------------------------------------
+
+local connection
+
+------------------------------------------- */
+
+/* ---
+@font-face {
+    font-family: 'font-name';
+    src: url('../fonts/font-name.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+$font-2: 'font-name',
+sans-serif;
+--- */
+
+/* -------------------------------------------
+
+colors
+
+------------------------------------------- */
+
+$m-1: #323842;
+$m-2: lighten($m-1, 36%);
+$m-3: lighten($m-1, 73%);
+$m-4: #fff;
+$m-5: darken($m-1, 12%);
+
+$a-1: #ffc169;
+$a-2: #5a8cf5;
+
+/* -------------------------------------------
+
+angle basic
+
+------------------------------------------- */
+
+$angle: 1rem;
+
+/* -------------------------------------------
+
+shadow basic
+
+------------------------------------------- */
+
+$shadow: 0 0.5rem 1rem rgba($m-5, 0.03);
+
+/* -------------------------------------------
+
+space basic
+
+------------------------------------------- */
+
+$space: 10rem;
+
+/* -------------------------------------------
+
+button height
+
+------------------------------------------- */
+
+$button: 7rem;
+
+/* -------------------------------------------
+
+trasition
+
+------------------------------------------- */
+
+$t-sm: 0.2s cubic-bezier(0, 0, 0.3642, 1);
+$t-md: 0.4s cubic-bezier(0, 0, 0.3642, 1);
+$t-lg: 0.6s cubic-bezier(0, 0, 0.3642, 1);
+$t-xl: 0.8s cubic-bezier(0, 0, 0.3642, 1);

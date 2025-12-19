@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Contact Us Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="../css/admin.css" />
+
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header-bar">
+        <div>
+          <h1>Contact Us Dashboard</h1>
+          <p class="subtitle">Manage and track customer inquiries</p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats">
+        <div class="card">
+          <label>Total Contacts</label>
+          <strong id="totalContacts">0</strong>
+        </div>
+
+        <div class="card initiated-card">
+          <label>Initiated</label>
+          <strong id="initiatedCount">0</strong>
+        </div>
+
+        <div class="card pending-card">
+          <label>Pending</label>
+          <strong id="pendingCount">0</strong>
+        </div>
+
+        <div class="card progress-card">
+          <label>In Progress</label>
+          <strong id="inProgressCount">0</strong>
+        </div>
+
+        <div class="card completed-card">
+          <label>Completed</label>
+          <strong id="completedCount">0</strong>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-container">
+        <!-- SEARCH + FILTER -->
+        <div class="top-bar">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search by name or email..."
+          />
+
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="All">All</button>
+            <button class="filter-btn" data-filter="Initiated">
+              Initiated
+            </button>
+            <button class="filter-btn" data-filter="Pending">Pending</button>
+            <button class="filter-btn" data-filter="In Progress">
+              In Progress
+            </button>
+            <button class="filter-btn" data-filter="Completed">
+              Completed
+            </button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Contact Info</th>
+              <th>Services</th>
+              <th>Message</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="contactTableBody">
+            <tr>
+              <td colspan="6" class="loading">Loading data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="../js/admin.js"></script>
+  </body>
+</html>
