@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="../css/admin.css" />
-
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
 
   <body>
@@ -19,7 +17,20 @@
           <h1>Contact Us Dashboard</h1>
           <p class="subtitle">Manage and track customer inquiries</p>
         </div>
-        <button id="logoutBtn" class="logout-btn">Logout</button>
+
+        <div class="header-actions">
+          <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs-bar">
+        <a href="./admin-contact.html" class="tab-btn active contact-tab">
+          Contact Us
+        </a>
+        <a href="./admin-callback.html" class="tab-btn callback-tab">
+          Callback
+        </a>
       </div>
 
       <!-- STATS -->
@@ -28,22 +39,18 @@
           <label>Total Contacts</label>
           <strong id="totalContacts">0</strong>
         </div>
-
         <div class="card initiated-card">
           <label>Initiated</label>
           <strong id="initiatedCount">0</strong>
         </div>
-
         <div class="card pending-card">
           <label>Pending</label>
           <strong id="pendingCount">0</strong>
         </div>
-
         <div class="card progress-card">
           <label>In Progress</label>
           <strong id="inProgressCount">0</strong>
         </div>
-
         <div class="card completed-card">
           <label>Completed</label>
           <strong id="completedCount">0</strong>
@@ -52,18 +59,13 @@
 
       <!-- TABLE -->
       <div class="table-container">
-        <!-- SEARCH + FILTER -->
         <div class="top-bar">
-          <div class="search-wrapper">
-            <i class="fas fa-search search-icon"></i>
-            <input
-              type="text"
-              id="searchInput"
-              class="search-input"
-              placeholder="Search by name or email..."
-            />
-          </div>
-
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search by name or email..."
+          />
           <div class="filter-buttons">
             <button class="filter-btn active" data-filter="All">All</button>
             <button class="filter-btn" data-filter="Initiated">
@@ -93,15 +95,13 @@
 
           <tbody id="contactTableBody">
             <tr>
-              <td colspan="6" class="loading">Loading data...</td>
+              <td colspan="6" class="loading">Loading...</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
 
-    <script src="./js/admin.js"></script>
+    <script src="./js/admin-contact.js"></script>
   </body>
 </html>
