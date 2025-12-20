@@ -477,4 +477,30 @@ tbody tr:not(:last-child) {
 
 .toast.info {
   background: #2563eb;
+  .tabs-bar {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tab-btn {
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 8px 8px 0 0;
+    background: #f1f5f9;
+    border: 1px solid #e5e7eb;
+    border-bottom: none;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .tab-btn:hover {
+    background: #e2e8f0;
+  }
+
+  .tab-btn.active {
+    background: #1e293b;
+    color: #ffffff;
+  }
 }
