@@ -1,10 +1,8 @@
 console.log("login.js loaded");
 
 // ================================
-// SUPABASE SAFE INIT
+// SUPABASE INIT
 // ================================
-console.log("Supabase object:", window.supabase);
-
 const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZnFoY2lyaGxieXNsbWV4dmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzIwNjEsImV4cCI6MjA4MTY0ODA2MX0.wGklNcQiLAPrmZTyNYWzJxy4YJvZ239umL5HJU0kVQI";
@@ -15,36 +13,185 @@ window.supabaseClient =
 
 const supabaseClient = window.supabaseClient;
 
-console.log("Supabase client created:", supabaseClient);
+(async () => {
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+
+  if (session) {
+    window.location.replace("admin-contact.html");
+  }
+})();
 
 // ================================
-// LOGIN HANDLER
+// DOM ELEMENTS
 // ================================
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("loginError");
+const otpSection = document.getElementById("otpSection");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const otpInputs = document.querySelectorAll(".otp-input");
 
-console.log("loginForm:", loginForm);
+// ================================
+// TEMP STATE
+// ================================
+let cachedEmail = "";
+let cachedPassword = "";
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  console.log("Login submit clicked");
+// ================================
+// OTP INPUT UX
+// ================================
+otpInputs.forEach((input, index) => {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^0-9]/g, "");
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  console.log("Email:", email);
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password,
+    if (input.value && index < otpInputs.length - 1) {
+      otpInputs[index + 1].focus();
+    }
   });
 
-  console.log("Supabase response:", data, error);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !input.value && index > 0) {
+      otpInputs[index - 1].focus();
+    }
+  });
+});
 
-  if (error) {
-    loginError.textContent = error.message;
+function getOtpValue() {
+  return Array.from(otpInputs)
+    .map((i) => i.value)
+    .join("");
+}
+
+// ================================
+// STEP 1️⃣ PASSWORD CHECK → SEND OTP
+// ================================
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  loginError.textContent = "";
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const submitBtn = e.target.querySelector("button[type='submit']");
+
+  if (!email || !password) {
+    loginError.textContent = "Email and password required";
     return;
   }
 
-  window.location.href = "admin.html";
+  submitBtn.classList.add("loading");
+
+  try {
+    const res = await fetch(
+      "https://hufqhcirhlbyslmexvgw.supabase.co/functions/v1/start-password-login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
+
+    const data = await res.json();
+    submitBtn.classList.remove("loading");
+
+    if (!res.ok || !data.success) {
+      loginError.textContent = data.error || "Invalid login credentials";
+      return;
+    }
+
+    // Cache credentials temporarily
+    cachedEmail = email;
+    cachedPassword = password;
+
+    // Show OTP UI
+    loginForm.style.display = "none";
+    otpSection.style.display = "block";
+    if (otpInputs.length > 0) {
+      otpInputs[0].focus();
+    }
+  } catch (err) {
+    submitBtn.classList.remove("loading");
+    console.error(err);
+    loginError.textContent = "Server error. Please try again.";
+  }
+});
+
+// ================================
+// STEP 2️⃣ VERIFY OTP → FINAL LOGIN
+// ================================
+verifyOtpBtn.addEventListener("click", async () => {
+  loginError.textContent = "";
+
+  const otp = getOtpValue();
+
+  if (otp.length !== 6) {
+    loginError.textContent = "Please enter the full 6-digit OTP";
+    return;
+  }
+
+  verifyOtpBtn.classList.add("loading");
+
+  try {
+    const res = await fetch(
+      "https://hufqhcirhlbyslmexvgw.supabase.co/functions/v1/verify-email-otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          email: cachedEmail,
+          otp,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      verifyOtpBtn.classList.remove("loading");
+      loginError.textContent = data.error || "Invalid OTP";
+      return;
+    }
+
+    // OTP verified → login
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email: cachedEmail,
+      password: cachedPassword,
+    });
+
+    verifyOtpBtn.classList.remove("loading");
+
+    if (error) {
+      loginError.textContent = error.message;
+      return;
+    }
+
+    // SUCCESS
+    window.location.href = "admin.html";
+  } catch (err) {
+    verifyOtpBtn.classList.remove("loading");
+    console.error(err);
+    loginError.textContent = "OTP verification failed";
+  }
+});
+
+document.getElementById("backToLogin").addEventListener("click", () => {
+  // Hide OTP section
+  otpSection.style.display = "none";
+
+  // Show login form again
+  loginForm.style.display = "block";
+
+  // Clear OTP inputs (important)
+  document.querySelectorAll(".otp-box").forEach((box) => {
+    box.value = "";
+  });
+
+  // Optional: clear error
+  loginError.textContent = "";
 });
