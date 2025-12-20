@@ -1,17 +1,34 @@
 console.log("admin-contact.js loaded");
 
 // ================================
-// SUPABASE INIT
+// 🔐 IMMEDIATE AUTH GUARD (NO UI FLASH)
 // ================================
-const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZnFoY2lyaGxieXNsbWV4dmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzIwNjEsImV4cCI6MjA4MTY0ODA2MX0.wGklNcQiLAPrmZTyNYWzJxy4YJvZ239umL5HJU0kVQI";
+(async () => {
+  const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZnFoY2lyaGxieXNsbWV4dmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzIwNjEsImV4cCI6MjA4MTY0ODA2MX0.wGklNcQiLAPrmZTyNYWzJxy4YJvZ239umL5HJU0kVQI";
 
-window.supabaseClient =
-  window.supabaseClient ||
-  window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.supabaseClient =
+    window.supabaseClient ||
+    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabaseClient = window.supabaseClient;
+  const supabaseClient = window.supabaseClient;
+
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+
+  // ❌ Not logged in → go to login
+  if (!session) {
+    window.location.replace("../index.html");
+    return;
+  }
+
+  // ✅ Logged in → enforce correct page
+  if (!window.location.pathname.includes("admin-contact.html")) {
+    window.location.replace("admin-contact.html");
+  }
+})();
 
 // ================================
 // GLOBAL STATE
@@ -21,28 +38,18 @@ let activeFilter = "All";
 let searchTerm = "";
 
 // ================================
-// DOM READY
+// DOM READY (UI + DATA LOGIC)
 // ================================
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   console.log("Admin Contact DOM loaded");
-
-  // 🔐 AUTH CHECK
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    window.location.href = "../index.html";
-    return;
-  }
 
   // 🚪 LOGOUT
   document.getElementById("logoutBtn").onclick = async () => {
-    await supabaseClient.auth.signOut();
-    window.location.href = "../index.html";
+    await window.supabaseClient.auth.signOut();
+    window.location.replace("../index.html");
   };
 
-  // 🔎 FILTER BUTTONS
+  // 🔘 FILTER BUTTONS
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document
@@ -55,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Search input
+  // 🔍 SEARCH
   document.getElementById("searchInput").addEventListener("input", (e) => {
     searchTerm = e.target.value.toLowerCase();
     renderTable();
@@ -65,16 +72,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ================================
-// FETCH DATA (CONTACT FORM)
+// FETCH DATA
 // ================================
 async function fetchData() {
-  const { data, error } = await supabaseClient
+  const { data, error } = await window.supabaseClient
     .from("contact_form")
     .select("*")
     .order("created_on", { ascending: false });
 
   if (error) {
     console.error("Fetch error:", error);
+    showToast("Failed to fetch data", "error");
     return;
   }
 
@@ -107,7 +115,7 @@ function updateCounts() {
 }
 
 // ================================
-// RENDER TABLE
+// RENDER TABLE (FILTER + SEARCH)
 // ================================
 function renderTable() {
   const tbody = document.getElementById("contactTableBody");
@@ -156,35 +164,28 @@ function renderTable() {
 
         <td>
           <div class="actions-main">
-           <div class="action1">
-            <span class="action-pill initiated"
-              onclick="updateStatus('${row.id}', 'Initiated')">
-              Initiated
-            </span>
-
-            <span class="action-pill pending"
-              onclick="updateStatus('${row.id}', 'Pending')">
-              Pending
-            </span>
-           </div>
-           <div class="action2">
-            <span class="action-pill in-progress"
-              onclick="updateStatus('${row.id}', 'In Progress')">
-              In Progress
-            </span>
-
-            <span class="action-pill completed"
-              onclick="updateStatus('${row.id}', 'Completed')">
-              Completed
-            </span>
-     
-
-          </div>
-          
-          
+            <div class="action1">
+              <span class="action-pill initiated"
+                onclick="updateStatus('${row.id}', 'Initiated')">
+                Initiated
+              </span>
+              <span class="action-pill pending"
+                onclick="updateStatus('${row.id}', 'Pending')">
+                Pending
+              </span>
+            </div>
+            <div class="action2">
+              <span class="action-pill in-progress"
+                onclick="updateStatus('${row.id}', 'In Progress')">
+                In Progress
+              </span>
+              <span class="action-pill completed"
+                onclick="updateStatus('${row.id}', 'Completed')">
+                Completed
+              </span>
+            </div>
           </div>
         </td>
-       
       </tr>`;
   });
 }
@@ -193,19 +194,18 @@ function renderTable() {
 // UPDATE STATUS
 // ================================
 async function updateStatus(id, status) {
-  const { error } = await supabaseClient
+  const { error } = await window.supabaseClient
     .from("contact_form")
     .update({ status })
     .eq("id", id);
 
   if (error) {
-    console.error("Update error:", error);
+    console.error(error);
     showToast("Failed to update status", "error");
     return;
   }
 
   showToast(`Status updated to "${status}"`, "success");
-
   fetchData();
 }
 
@@ -215,13 +215,14 @@ async function updateStatus(id, status) {
 async function deleteRow(id) {
   if (!confirm("Delete this record?")) return;
 
-  const { error } = await supabaseClient
+  const { error } = await window.supabaseClient
     .from("contact_form")
     .delete()
     .eq("id", id);
 
   if (error) {
-    console.error("Delete error:", error);
+    console.error(error);
+    showToast("Delete failed", "error");
     return;
   }
 
@@ -229,10 +230,11 @@ async function deleteRow(id) {
 }
 
 // ================================
-// TOAST FUNCTION
+// TOAST
 // ================================
 function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
+  if (!toast) return;
 
   toast.textContent = message;
   toast.className = `toast ${type} show`;

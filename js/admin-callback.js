@@ -1,17 +1,34 @@
-console.log("admin-contact.js loaded");
+console.log("admin-callback.js loaded");
 
 // ================================
-// SUPABASE INIT
+// 🔐 IMMEDIATE AUTH GUARD (NO FLASH)
 // ================================
-const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZnFoY2lyaGxieXNsbWV4dmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzIwNjEsImV4cCI6MjA4MTY0ODA2MX0.wGklNcQiLAPrmZTyNYWzJxy4YJvZ239umL5HJU0kVQI";
+(async () => {
+  const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZnFoY2lyaGxieXNsbWV4dmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzIwNjEsImV4cCI6MjA4MTY0ODA2MX0.wGklNcQiLAPrmZTyNYWzJxy4YJvZ239umL5HJU0kVQI";
 
-window.supabaseClient =
-  window.supabaseClient ||
-  window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.supabaseClient =
+    window.supabaseClient ||
+    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabaseClient = window.supabaseClient;
+  const supabaseClient = window.supabaseClient;
+
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+
+  // ❌ Not logged in → login page
+  if (!session) {
+    window.location.replace("../index.html");
+    return;
+  }
+
+  // ✅ Logged in → force correct screen
+  if (!window.location.pathname.includes("admin-callback.html")) {
+    window.location.replace("admin-callback.html");
+  }
+})();
 
 // ================================
 // GLOBAL STATE
@@ -23,26 +40,19 @@ let searchTerm = "";
 // ================================
 // DOM READY
 // ================================
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Admin Contact DOM loaded");
-
-  // 🔐 AUTH CHECK
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    window.location.href = "../index.html";
-    return;
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Admin Callback DOM loaded");
 
   // 🚪 LOGOUT
-  document.getElementById("logoutBtn").onclick = async () => {
-    await supabaseClient.auth.signOut();
-    window.location.href = "../index.html";
-  };
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      await window.supabaseClient.auth.signOut();
+      window.location.replace("../index.html");
+    };
+  }
 
-  // 🔎 FILTER BUTTONS
+  // 🔘 FILTER BUTTONS
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document
@@ -55,26 +65,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Search input
-  document.getElementById("searchInput").addEventListener("input", (e) => {
-    searchTerm = e.target.value.toLowerCase();
-    renderTable();
-  });
+  // 🔍 SEARCH
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      searchTerm = e.target.value.toLowerCase();
+      renderTable();
+    });
+  }
 
   fetchData();
 });
 
 // ================================
-// FETCH DATA (CONTACT FORM)
+// FETCH CALLBACK DATA
 // ================================
 async function fetchData() {
-  const { data, error } = await supabaseClient
+  const { data, error } = await window.supabaseClient
     .from("call_back")
     .select("*")
     .order("created_on", { ascending: false });
 
   if (error) {
     console.error("Fetch error:", error);
+    showToast("Failed to load callback data", "error");
     return;
   }
 
@@ -122,7 +136,7 @@ function renderTable() {
   if (!filteredRows.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" class="loading">No matching records found</td>
+        <td colspan="5" class="loading">No matching records found</td>
       </tr>`;
     return;
   }
@@ -134,40 +148,42 @@ function renderTable() {
       <tr>
         <td>${row.name || "-"}</td>
         <td>${row.phone || "-"}</td>
-         <td>
+
+        <td>
           <span class="status-badge status-${statusClass}">
             ${row.status}
           </span>
         </td>
+
         <td>${new Date(row.created_on).toLocaleString()}</td>
 
         <td>
           <div class="actions-main">
-           <div class="action1">
-            <span class="action-pill initiated"
-              onclick="updateStatus('${row.id}', 'Initiated')">
-              Initiated
-            </span>
+            <div class="action1">
+              <span class="action-pill initiated"
+                onclick="updateStatus('${row.id}', 'Initiated')">
+                Initiated
+              </span>
 
-            <span class="action-pill pending"
-              onclick="updateStatus('${row.id}', 'Pending')">
-              Pending
-            </span>
-           </div>
-           <div class="action2">
-            <span class="action-pill in-progress"
-              onclick="updateStatus('${row.id}', 'In Progress')">
-              In Progress
-            </span>
+              <span class="action-pill pending"
+                onclick="updateStatus('${row.id}', 'Pending')">
+                Pending
+              </span>
+            </div>
 
-            <span class="action-pill completed"
-              onclick="updateStatus('${row.id}', 'Completed')">
-              Completed
-            </span>
-          </div>
+            <div class="action2">
+              <span class="action-pill in-progress"
+                onclick="updateStatus('${row.id}', 'In Progress')">
+                In Progress
+              </span>
+
+              <span class="action-pill completed"
+                onclick="updateStatus('${row.id}', 'Completed')">
+                Completed
+              </span>
+            </div>
           </div>
         </td>
-       
       </tr>`;
   });
 }
@@ -176,7 +192,7 @@ function renderTable() {
 // UPDATE STATUS
 // ================================
 async function updateStatus(id, status) {
-  const { error } = await supabaseClient
+  const { error } = await window.supabaseClient
     .from("call_back")
     .update({ status })
     .eq("id", id);
@@ -188,7 +204,6 @@ async function updateStatus(id, status) {
   }
 
   showToast(`Status updated to "${status}"`, "success");
-
   fetchData();
 }
 
@@ -196,15 +211,16 @@ async function updateStatus(id, status) {
 // DELETE ROW (OPTIONAL)
 // ================================
 async function deleteRow(id) {
-  if (!confirm("Delete this record?")) return;
+  if (!confirm("Delete this callback request?")) return;
 
-  const { error } = await supabaseClient
+  const { error } = await window.supabaseClient
     .from("call_back")
     .delete()
     .eq("id", id);
 
   if (error) {
     console.error("Delete error:", error);
+    showToast("Delete failed", "error");
     return;
   }
 
@@ -212,10 +228,11 @@ async function deleteRow(id) {
 }
 
 // ================================
-// TOAST FUNCTION
+// TOAST (SAFE)
 // ================================
 function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
+  if (!toast) return;
 
   toast.textContent = message;
   toast.className = `toast ${type} show`;
