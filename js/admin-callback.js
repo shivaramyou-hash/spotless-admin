@@ -72,7 +72,7 @@ async function fetchData() {
     .from("call_back")
     .select("*")
     .order("created_on", { ascending: false });
-  console.log("Fetched data:", data, error);
+
   if (error) {
     console.error("Fetch error:", error);
     return;
@@ -183,8 +183,11 @@ async function updateStatus(id, status) {
 
   if (error) {
     console.error("Update error:", error);
+    showToast("Failed to update status", "error");
     return;
   }
+
+  showToast(`Status updated to "${status}"`, "success");
 
   fetchData();
 }
@@ -206,4 +209,18 @@ async function deleteRow(id) {
   }
 
   fetchData();
+}
+
+// ================================
+// TOAST FUNCTION
+// ================================
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
 }
