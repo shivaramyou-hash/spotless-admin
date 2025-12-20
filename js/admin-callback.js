@@ -45,12 +45,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🚪 LOGOUT
   const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.onclick = async () => {
-      await window.supabaseClient.auth.signOut();
-      window.location.replace("../index.html");
-    };
-  }
+  document.getElementById("logoutBtn").onclick = async () => {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch (e) {
+      console.warn(e);
+    }
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    window.location.href = "../index.html";
+  };
 
   // 🔘 FILTER BUTTONS
   document.querySelectorAll(".filter-btn").forEach((btn) => {
