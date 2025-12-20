@@ -31,14 +31,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   } = await supabaseClient.auth.getSession();
 
   if (!session) {
-    window.location.href = "../login.html";
+    window.location.href = "../index.html";
     return;
   }
 
+  // // 🔐 SEND OTP AFTER LOGIN
+  // await sendOtp(session.user.email);
+
+  // // Show OTP screen instead of dashboard
+  // document.getElementById("otpSection").style.display = "block";
+  // document.getElementById("adminSection").style.display = "none";
   // Logout
   document.getElementById("logoutBtn").onclick = async () => {
     await supabaseClient.auth.signOut();
-    window.location.href = "../login.html";
+    window.location.href = "../index.html";
   };
 
   // Filter buttons
@@ -62,6 +68,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   fetchData();
 });
+
+// async function sendOtp(email) {
+//   const { error } = await supabaseClient.auth.signInWithOtp({
+//     email,
+//     options: {
+//       shouldCreateUser: false,
+//     },
+//   });
+
+//   if (error) {
+//     console.error("OTP send failed:", error.message);
+//     alert("Failed to send OTP");
+//   } else {
+//     alert("OTP sent to your email");
+//   }
+// }
 
 // ================================
 // FETCH DATA
