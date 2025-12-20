@@ -1,7 +1,7 @@
-console.log("admin.js loaded");
+console.log("admin-contact.js loaded");
 
 // ================================
-// SUPABASE SAFE INIT
+// SUPABASE INIT
 // ================================
 const SUPABASE_URL = "https://hufqhcirhlbyslmexvgw.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -24,8 +24,9 @@ let searchTerm = "";
 // DOM READY
 // ================================
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Admin DOM loaded");
+  console.log("Admin Contact DOM loaded");
 
+  // 🔐 AUTH CHECK
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -35,19 +36,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // // 🔐 SEND OTP AFTER LOGIN
-  // await sendOtp(session.user.email);
-
-  // // Show OTP screen instead of dashboard
-  // document.getElementById("otpSection").style.display = "block";
-  // document.getElementById("adminSection").style.display = "none";
-  // Logout
+  // 🚪 LOGOUT
   document.getElementById("logoutBtn").onclick = async () => {
     await supabaseClient.auth.signOut();
     window.location.href = "../index.html";
   };
 
-  // Filter buttons
+  // 🔎 FILTER BUTTONS
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document
@@ -69,31 +64,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   fetchData();
 });
 
-// async function sendOtp(email) {
-//   const { error } = await supabaseClient.auth.signInWithOtp({
-//     email,
-//     options: {
-//       shouldCreateUser: false,
-//     },
-//   });
-
-//   if (error) {
-//     console.error("OTP send failed:", error.message);
-//     alert("Failed to send OTP");
-//   } else {
-//     alert("OTP sent to your email");
-//   }
-// }
-
 // ================================
-// FETCH DATA
+// FETCH DATA (CONTACT FORM)
 // ================================
 async function fetchData() {
   const { data, error } = await supabaseClient
-    .from("contact_form")
+    .from("call_back")
     .select("*")
     .order("created_on", { ascending: false });
-
+  console.log("Fetched data:", data, error);
   if (error) {
     console.error("Fetch error:", error);
     return;
@@ -118,17 +97,13 @@ function updateCounts() {
     (r) => r.status === "Pending"
   ).length;
 
-  document.getElementById("inProgressCount").textContent = allRows.filter(
-    (r) => r.status === "In Progress"
-  ).length;
-
   document.getElementById("completedCount").textContent = allRows.filter(
     (r) => r.status === "Completed"
   ).length;
 }
 
 // ================================
-// RENDER TABLE (FILTER + SEARCH)
+// RENDER TABLE
 // ================================
 function renderTable() {
   const tbody = document.getElementById("contactTableBody");
@@ -139,7 +114,7 @@ function renderTable() {
 
     const matchesSearch =
       row.name?.toLowerCase().includes(searchTerm) ||
-      row.email?.toLowerCase().includes(searchTerm);
+      row.phone?.toLowerCase().includes(searchTerm);
 
     return matchesStatus && matchesSearch;
   });
@@ -157,22 +132,13 @@ function renderTable() {
 
     tbody.innerHTML += `
       <tr>
-        <td class="contact-info">
-          <strong>${row.name}</strong>
-          <div>${row.email}</div>
-          <div>${row.phone || "-"}</div>
-        </td>
-
-        <td>${row.services || "-"}</td>
-
-        <td class="message">${row.message || "-"}</td>
-
-        <td>
+        <td>${row.name || "-"}</td>
+        <td>${row.phone || "-"}</td>
+         <td>
           <span class="status-badge status-${statusClass}">
             ${row.status}
           </span>
         </td>
-
         <td>${new Date(row.created_on).toLocaleString()}</td>
 
         <td>
@@ -198,11 +164,7 @@ function renderTable() {
               onclick="updateStatus('${row.id}', 'Completed')">
               Completed
             </span>
-     
-
           </div>
-          
-          
           </div>
         </td>
        
@@ -215,29 +177,26 @@ function renderTable() {
 // ================================
 async function updateStatus(id, status) {
   const { error } = await supabaseClient
-    .from("contact_form")
+    .from("call_back")
     .update({ status })
     .eq("id", id);
 
   if (error) {
     console.error("Update error:", error);
-    showToast("Failed to update status", "error");
     return;
   }
-
-  showToast(`Status updated to "${status}"`, "success");
 
   fetchData();
 }
 
 // ================================
-// DELETE ROW
+// DELETE ROW (OPTIONAL)
 // ================================
 async function deleteRow(id) {
   if (!confirm("Delete this record?")) return;
 
   const { error } = await supabaseClient
-    .from("contact_form")
+    .from("call_back")
     .delete()
     .eq("id", id);
 
@@ -247,18 +206,4 @@ async function deleteRow(id) {
   }
 
   fetchData();
-}
-
-// ================================
-// TOAST FUNCTION
-// ================================
-function showToast(message, type = "success") {
-  const toast = document.getElementById("toast");
-
-  toast.textContent = message;
-  toast.className = `toast ${type} show`;
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 3000);
 }

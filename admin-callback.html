@@ -2,13 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Contact Us Dashboard</title>
+    <title>Callback Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="../css/admin.css" />
-
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
 
   <body>
@@ -16,34 +14,39 @@
       <!-- HEADER -->
       <div class="header-bar">
         <div>
-          <h1>Contact Us Dashboard</h1>
-          <p class="subtitle">Manage and track customer inquiries</p>
+          <h1>Callback Requests</h1>
+          <p class="subtitle">Manage customer callback requests</p>
         </div>
-        <button id="logoutBtn" class="logout-btn">Logout</button>
+
+        <div class="header-actions">
+          <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
       </div>
 
-      <!-- STATS -->
+      <!-- TABS -->
+      <div class="tabs-bar">
+        <a href="./admin-contact.html" class="tab-btn contact-tab">
+          Contact Us
+        </a>
+        <a href="./admin-callback.html" class="tab-btn active callback-tab">
+          Callback
+        </a>
+      </div>
+
+      <!-- TABS -->
       <div class="stats">
         <div class="card">
           <label>Total Contacts</label>
           <strong id="totalContacts">0</strong>
         </div>
-
         <div class="card initiated-card">
           <label>Initiated</label>
           <strong id="initiatedCount">0</strong>
         </div>
-
         <div class="card pending-card">
           <label>Pending</label>
           <strong id="pendingCount">0</strong>
         </div>
-
-        <div class="card progress-card">
-          <label>In Progress</label>
-          <strong id="inProgressCount">0</strong>
-        </div>
-
         <div class="card completed-card">
           <label>Completed</label>
           <strong id="completedCount">0</strong>
@@ -52,18 +55,13 @@
 
       <!-- TABLE -->
       <div class="table-container">
-        <!-- SEARCH + FILTER -->
         <div class="top-bar">
-          <div class="search-wrapper">
-            <i class="fas fa-search search-icon"></i>
-            <input
-              type="text"
-              id="searchInput"
-              class="search-input"
-              placeholder="Search by name or email..."
-            />
-          </div>
-
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search by name or phone..."
+          />
           <div class="filter-buttons">
             <button class="filter-btn active" data-filter="All">All</button>
             <button class="filter-btn" data-filter="Initiated">
@@ -82,26 +80,23 @@
         <table>
           <thead>
             <tr>
-              <th>Contact Info</th>
-              <th>Services</th>
-              <th>Message</th>
+              <th>Customer</th>
+              <th>Phone</th>
               <th>Status</th>
-              <th>Submitted</th>
+              <th>Requested On</th>
               <th>Actions</th>
             </tr>
           </thead>
 
           <tbody id="contactTableBody">
             <tr>
-              <td colspan="6" class="loading">Loading data...</td>
+              <td colspan="6" class="loading">Loading...</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
 
-    <script src="./js/admin.js"></script>
+    <script src="./js/admin-callback.js"></script>
   </body>
 </html>
