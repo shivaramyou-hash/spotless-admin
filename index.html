@@ -54,6 +54,7 @@
               />
               <i class="far fa-lock"></i>
             </div>
+            <!-- OTP SECTION -->
 
             <div class="login-actions">
               <a href="#" class="mil-text-link">Forgot password?</a>
@@ -65,10 +66,38 @@
                 type="submit"
                 class="mil-btn mil-bg-a-1 mil-br-xl login-btn"
               >
-                Login <i class="far fa-arrow-right"></i>
+                Login
+                <!-- <i class="far fa-arrow-right"></i> -->
               </button>
             </div>
           </form>
+
+          <!-- OTP SECTION -->
+          <div id="otpSection" style="display: none">
+            <div class="otp-boxes">
+              <input class="otp-input" maxlength="1" />
+              <input class="otp-input" maxlength="1" />
+              <input class="otp-input" maxlength="1" />
+              <input class="otp-input" maxlength="1" />
+              <input class="otp-input" maxlength="1" />
+              <input class="otp-input" maxlength="1" />
+            </div>
+
+            <div class="login-btn-wrap">
+              <button
+                type="button"
+                id="verifyOtpBtn"
+                class="mil-btn mil-bg-a-1 mil-br-xl login-btn"
+              >
+                Verify OTP
+              </button>
+            </div>
+            <div class="otp-actions">
+              <button type="button" id="backToLogin" class="otp-link">
+                ← Back to login
+              </button>
+            </div>
+          </div>
 
           <!-- ERROR MESSAGE -->
           <p
