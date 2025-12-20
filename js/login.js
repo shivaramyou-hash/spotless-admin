@@ -172,7 +172,7 @@ verifyOtpBtn.addEventListener("click", async () => {
     }
 
     // SUCCESS
-    window.location.href = "admin.html";
+    window.location.href = "admin-contact.html";
   } catch (err) {
     verifyOtpBtn.classList.remove("loading");
     console.error(err);
