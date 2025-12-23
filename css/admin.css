@@ -479,11 +479,9 @@ tbody tr:not(:last-child) {
   background: #2563eb;
 }
 
-
 /* ===============================
     TABS BAR
 ================================ */
-
 
 .tabs-bar {
   display: flex;
@@ -510,4 +508,190 @@ tbody tr:not(:last-child) {
 .tab-btn.active {
   background: #1e293b;
   color: #ffffff;
+}
+
+/* ===============================
+   NOTIFICATION TOGGLE
+================================ */
+
+.notification-toggle {
+  margin-bottom: 20px;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.toggle-label input {
+  display: none;
+}
+
+.toggle-ui {
+  width: 42px;
+  height: 22px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-ui::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+}
+
+.toggle-label input:checked + .toggle-ui {
+  background: #22c55e;
+}
+
+.toggle-label input:checked + .toggle-ui::after {
+  transform: translateX(20px);
+}
+
+/* ===============================
+   NOTIFICATIONS UI
+================================ */
+
+.notification-panel {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.notification-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* Toggle row */
+.notification-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Toggle text */
+.toggle-text h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.toggle-text p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.switch input:checked + .slider {
+  background-color: #22c55e;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Email form */
+.email-form {
+  margin-top: 24px;
+}
+
+.email-form.hidden {
+  display: none;
+}
+
+.email-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.email-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.email-textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.email-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Actions */
+.form-actions {
+  margin-top: 16px;
+}
+
+.primary-btn {
+  background: #1f2937;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #111827;
 }
