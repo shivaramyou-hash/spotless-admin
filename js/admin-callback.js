@@ -117,6 +117,9 @@ function updateCounts() {
     (r) => r.status === "Pending"
   ).length;
 
+  document.getElementById("inProgressCount").textContent = allRows.filter(
+    (r) => r.status === "In Progress"
+  ).length;
   document.getElementById("completedCount").textContent = allRows.filter(
     (r) => r.status === "Completed"
   ).length;
