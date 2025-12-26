@@ -300,6 +300,7 @@
 }
 
 /* password eye button */
+
 .password-field {
   position: relative;
 }
@@ -311,10 +312,10 @@
   transform: translateY(-50%);
   cursor: pointer;
   color: #999;
-  user-select: none; /* 🔥 prevents text selection */
+  user-select: none;
   -webkit-user-select: none;
 }
 
 .password-toggle:hover {
-  color: #405f99; /* theme color */
+  color: #405f99;
 }
