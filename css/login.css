@@ -298,3 +298,24 @@
     font-size: 18px;
   }
 }
+
+/* password eye button */
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.password-toggle:hover {
+  color: #405f99;
+}
