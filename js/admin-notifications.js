@@ -36,13 +36,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   } = await supabaseClient.auth.getSession();
 
   if (!session) {
-    window.location.href = "../login.html";
+    window.location.href = "/";
     return;
   }
 
   logoutBtn.onclick = async () => {
     await supabaseClient.auth.signOut();
-    window.location.href = "../login.html";
+    window.location.href = "/";
   };
 
   loadSettings();
@@ -79,7 +79,6 @@ function syncUI() {
 // ================================
 toggle.addEventListener("change", async () => {
   syncUI();
-
   const { error } = await supabaseClient.from("notification_settings").upsert({
     id: SETTINGS_ID,
     notification_enabled: toggle.checked,
@@ -87,6 +86,8 @@ toggle.addEventListener("change", async () => {
 
   if (error) {
     showToast("Failed to update setting", "error");
+  } else {
+    showToast("Notification emails updated", "success");
   }
 });
 
@@ -110,7 +111,6 @@ saveBtn.addEventListener("click", async () => {
     notification_emails: emails,
     updated_at: new Date(),
   });
-
   if (error) {
     showToast("Failed to update emails", "error");
   } else {

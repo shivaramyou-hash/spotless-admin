@@ -2,15 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Callback Dashboard</title>
+    <title>Contact Us Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- chome mobile panel color -->
     <meta name="theme-color" content="#ffc169" />
     <!-- favicon -->
-    <link rel="shortcut icon" href="img/ui/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/ui/favicon.png" type="image/x-icon" />
 
-    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
 
@@ -19,8 +19,8 @@
       <!-- HEADER -->
       <div class="header-bar">
         <div>
-          <h1>Callback Requests</h1>
-          <p class="subtitle">Manage customer callback requests</p>
+          <h1>Contact Us Dashboard</h1>
+          <p class="subtitle">Manage and track customer inquiries</p>
         </div>
 
         <div class="header-actions">
@@ -30,16 +30,12 @@
 
       <!-- TABS -->
       <div class="tabs-bar">
-        <a href="./admin-contact.html" class="tab-btn contact-tab">
-          Contact Us
-        </a>
-        <a href="./admin-callback.html" class="tab-btn active callback-tab">
-          Callback
-        </a>
-        <a href="./admin-notifications.html" class="tab-btn"> Notifications </a>
+        <a href="../contact" class="tab-btn active contact-tab"> Contact Us </a>
+        <a href="../callback" class="tab-btn callback-tab"> Callback </a>
+        <a href="../notifications" class="tab-btn"> Notifications </a>
       </div>
 
-      <!-- TABS -->
+      <!-- STATS -->
       <div class="stats">
         <div class="card">
           <label>Total Contacts</label>
@@ -70,7 +66,7 @@
             type="text"
             id="searchInput"
             class="search-input"
-            placeholder="Search by name or phone..."
+            placeholder="Search by name or email..."
           />
           <div class="filter-buttons">
             <button class="filter-btn active" data-filter="All">All</button>
@@ -90,10 +86,11 @@
         <table>
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Phone</th>
+              <th>Contact Info</th>
+              <th>Services</th>
+              <th>Message</th>
               <th>Status</th>
-              <th>Requested On</th>
+              <th>Submitted</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -109,6 +106,6 @@
     <!-- Toast -->
     <div id="toast" class="toast"></div>
 
-    <script src="./js/admin-callback.js"></script>
+    <script src="/js/admin-contact.js"></script>
   </body>
 </html>

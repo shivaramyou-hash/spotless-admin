@@ -19,7 +19,7 @@ const supabaseClient = window.supabaseClient;
   } = await supabaseClient.auth.getSession();
 
   if (session) {
-    window.location.replace("admin-contact.html");
+    window.location.replace("admin/contact");
   }
 })();
 
@@ -172,7 +172,7 @@ verifyOtpBtn.addEventListener("click", async () => {
     }
 
     // SUCCESS
-    window.location.href = "admin-contact.html";
+    window.location.href = "admin/contact";
   } catch (err) {
     verifyOtpBtn.classList.remove("loading");
     console.error(err);

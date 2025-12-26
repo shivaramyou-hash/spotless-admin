@@ -20,13 +20,8 @@ console.log("admin-callback.js loaded");
 
   // ❌ Not logged in → login page
   if (!session) {
-    window.location.replace("../index.html");
+    window.location.replace("/");
     return;
-  }
-
-  // ✅ Logged in → force correct screen
-  if (!window.location.pathname.includes("admin-callback.html")) {
-    window.location.replace("admin-callback.html");
   }
 })();
 
@@ -44,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Admin Callback DOM loaded");
 
   // 🚪 LOGOUT
-  const logoutBtn = document.getElementById("logoutBtn");
   document.getElementById("logoutBtn").onclick = async () => {
     try {
       await supabaseClient.auth.signOut();
@@ -55,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
     sessionStorage.clear();
 
-    window.location.href = "../index.html";
+    window.location.href = "/";
   };
 
   // 🔘 FILTER BUTTONS
