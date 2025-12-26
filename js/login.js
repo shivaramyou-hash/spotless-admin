@@ -195,3 +195,19 @@ document.getElementById("backToLogin").addEventListener("click", () => {
   // Optional: clear error
   loginError.textContent = "";
 });
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+/* Prevent focus + selection */
+togglePassword.addEventListener("mousedown", (e) => {
+  e.preventDefault();
+});
+
+/* Toggle visibility */
+togglePassword.addEventListener("click", () => {
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+
+  togglePassword.classList.toggle("fa-eye");
+  togglePassword.classList.toggle("fa-eye-slash");
+});
