@@ -20,13 +20,8 @@ console.log("admin-contact.js loaded");
 
   // ❌ Not logged in → go to login
   if (!session) {
-    window.location.replace("../index.html");
+    window.location.replace("/");
     return;
-  }
-
-  // ✅ Logged in → enforce correct page
-  if (!window.location.pathname.includes("admin-contact.html")) {
-    window.location.replace("admin-contact.html");
   }
 })();
 
@@ -54,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
     sessionStorage.clear();
 
-    window.location.href = "../index.html";
+    window.location.href = "/";
   };
 
   // 🔘 FILTER BUTTONS
