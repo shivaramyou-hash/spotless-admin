@@ -101,14 +101,17 @@ loginForm.addEventListener("submit", async (e) => {
   submitBtn.classList.add("loading");
 
   try {
-    const res = await fetch("http://localhost:5000/api/start-password-login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    const res = await fetch(
+      "https://spotless-server.vercel.app/api/start-password-login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ email, password }),
       },
-      body: JSON.stringify({ email, password }),
-    });
+    );
 
     const data = await res.json();
     submitBtn.classList.remove("loading");
@@ -151,17 +154,20 @@ verifyOtpBtn.addEventListener("click", async () => {
   verifyOtpBtn.classList.add("loading");
 
   try {
-    const res = await fetch("http://localhost:5000/api/verify-email-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    const res = await fetch(
+      "https://spotless-server.vercel.app/api/verify-email-otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          email: cachedEmail,
+          otp,
+        }),
       },
-      body: JSON.stringify({
-        email: cachedEmail,
-        otp,
-      }),
-    });
+    );
 
     const data = await res.json();
 

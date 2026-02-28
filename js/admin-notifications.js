@@ -54,11 +54,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadSettings() {
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch("http://localhost:5000/api/notification-settings", {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      "https://spotless-server.vercel.app/api/notification-settings",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     const body = await res.json();
 
@@ -94,21 +97,24 @@ toggle.addEventListener("change", async () => {
   syncUI();
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch("http://localhost:5000/api/notification-settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      "https://spotless-server.vercel.app/api/notification-settings",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: SETTINGS_ID,
+          notification_enabled: toggle.checked,
+          notification_emails: emailInput.value
+            .split(",")
+            .map((e) => e.trim())
+            .filter(Boolean),
+        }),
       },
-      body: JSON.stringify({
-        id: SETTINGS_ID,
-        notification_enabled: toggle.checked,
-        notification_emails: emailInput.value
-          .split(",")
-          .map((e) => e.trim())
-          .filter(Boolean),
-      }),
-    });
+    );
 
     if (!res.ok) {
       throw new Error("Failed to update setting");
@@ -137,18 +143,21 @@ saveBtn.addEventListener("click", async () => {
 
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch("http://localhost:5000/api/notification-settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      "https://spotless-server.vercel.app/api/notification-settings",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: SETTINGS_ID,
+          notification_enabled: true,
+          notification_emails: emails,
+        }),
       },
-      body: JSON.stringify({
-        id: SETTINGS_ID,
-        notification_enabled: true,
-        notification_emails: emails,
-      }),
-    });
+    );
 
     if (!res.ok) {
       throw new Error("Failed to update emails");

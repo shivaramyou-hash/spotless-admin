@@ -41,7 +41,14 @@ function generateOtp() {
 // ROUTES
 // ================================
 
-// 0. CHECK DB CONNECTION
+// 0. HEALTH CHECK
+app.get("/", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "ok", message: "Spotless Admin Server is running" });
+});
+
+// 0.5 CHECK DB CONNECTION
 app.get("/api/check-db", async (req, res) => {
   try {
     const start = Date.now();

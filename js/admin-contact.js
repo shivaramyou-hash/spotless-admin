@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchData() {
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch("http://localhost:5000/api/contacts", {
+    const res = await fetch("https://spotless-server.vercel.app/api/contacts", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -214,14 +214,17 @@ function renderTable() {
 async function updateStatus(id, status) {
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch(`http://localhost:5000/api/contacts/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      `https://spotless-server.vercel.app/api/contacts/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
       },
-      body: JSON.stringify({ status }),
-    });
+    );
 
     const body = await res.json();
 
@@ -245,12 +248,15 @@ async function deleteRow(id) {
 
   const token = localStorage.getItem("admin_token");
   try {
-    const res = await fetch(`http://localhost:5000/api/contacts/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      `https://spotless-server.vercel.app/api/contacts/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     const body = await res.json();
 
