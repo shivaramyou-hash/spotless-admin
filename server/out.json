@@ -1,0 +1,42 @@
+{
+  "otp_tokens_columns": [
+    {
+      "column_name": "id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text"
+    },
+    {
+      "column_name": "otp",
+      "data_type": "text"
+    },
+    {
+      "column_name": "expires_at",
+      "data_type": "timestamp with time zone"
+    },
+    {
+      "column_name": "used",
+      "data_type": "boolean"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone"
+    }
+  ],
+  "all_tables": [
+    {
+      "table_schema": "public",
+      "table_name": "otp_tokens"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "contact_requests"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "users"
+    }
+  ]
+}

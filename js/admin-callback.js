@@ -14,12 +14,10 @@ console.log("admin-callback.js loaded");
 
   const supabaseClient = window.supabaseClient;
 
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
+  const token = localStorage.getItem("admin_token");
 
   // ❌ Not logged in → login page
-  if (!session) {
+  if (!token) {
     window.location.replace("/");
     return;
   }
@@ -81,20 +79,27 @@ document.addEventListener("DOMContentLoaded", () => {
 // FETCH CALLBACK DATA
 // ================================
 async function fetchData() {
-  const { data, error } = await window.supabaseClient
-    .from("call_back")
-    .select("*")
-    .order("created_on", { ascending: false });
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch("http://localhost:5000/api/callbacks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Failed to load callback data");
+    }
+
+    allRows = body.data || [];
+    updateCounts();
+    renderTable();
+  } catch (error) {
     console.error("Fetch error:", error);
     showToast("Failed to load callback data", "error");
-    return;
   }
-
-  allRows = data || [];
-  updateCounts();
-  renderTable();
 }
 
 // ================================
@@ -104,18 +109,18 @@ function updateCounts() {
   document.getElementById("totalContacts").textContent = allRows.length;
 
   document.getElementById("initiatedCount").textContent = allRows.filter(
-    (r) => r.status === "Initiated"
+    (r) => r.status === "Initiated",
   ).length;
 
   document.getElementById("pendingCount").textContent = allRows.filter(
-    (r) => r.status === "Pending"
+    (r) => r.status === "Pending",
   ).length;
 
   document.getElementById("inProgressCount").textContent = allRows.filter(
-    (r) => r.status === "In Progress"
+    (r) => r.status === "In Progress",
   ).length;
   document.getElementById("completedCount").textContent = allRows.filter(
-    (r) => r.status === "Completed"
+    (r) => r.status === "Completed",
   ).length;
 }
 
@@ -206,19 +211,29 @@ function renderTable() {
 // UPDATE STATUS
 // ================================
 async function updateStatus(id, status) {
-  const { error } = await window.supabaseClient
-    .from("call_back")
-    .update({ status })
-    .eq("id", id);
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch(`http://localhost:5000/api/callbacks/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Failed to update status");
+    }
+
+    showToast(`Status updated to "${status}"`, "success");
+    fetchData();
+  } catch (error) {
     console.error("Update error:", error);
     showToast("Failed to update status", "error");
-    return;
   }
-
-  showToast(`Status updated to "${status}"`, "success");
-  fetchData();
 }
 
 // ================================
@@ -227,18 +242,26 @@ async function updateStatus(id, status) {
 async function deleteRow(id) {
   if (!confirm("Delete this callback request?")) return;
 
-  const { error } = await window.supabaseClient
-    .from("call_back")
-    .delete()
-    .eq("id", id);
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch(`http://localhost:5000/api/callbacks/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Delete failed");
+    }
+
+    fetchData();
+  } catch (error) {
     console.error("Delete error:", error);
     showToast("Delete failed", "error");
-    return;
   }
-
-  fetchData();
 }
 
 // ================================

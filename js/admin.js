@@ -26,11 +26,9 @@ let searchTerm = "";
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Admin DOM loaded");
 
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
+  const token = localStorage.getItem("admin_token");
 
-  if (!session) {
+  if (!token) {
     window.location.href = "../index.html";
     return;
   }
@@ -44,6 +42,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Logout
   document.getElementById("logoutBtn").onclick = async () => {
     await supabaseClient.auth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "../index.html";
   };
 
@@ -89,19 +89,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 // FETCH DATA
 // ================================
 async function fetchData() {
-  const { data, error } = await supabaseClient
-    .from("contact_form")
-    .select("*")
-    .order("created_on", { ascending: false });
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch("http://localhost:5000/api/contacts", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Failed to fetch data");
+    }
+
+    allRows = body.data || [];
+    updateCounts();
+    renderTable();
+  } catch (error) {
     console.error("Fetch error:", error);
-    return;
   }
-
-  allRows = data || [];
-  updateCounts();
-  renderTable();
 }
 
 // ================================
@@ -111,19 +118,19 @@ function updateCounts() {
   document.getElementById("totalContacts").textContent = allRows.length;
 
   document.getElementById("initiatedCount").textContent = allRows.filter(
-    (r) => r.status === "Initiated"
+    (r) => r.status === "Initiated",
   ).length;
 
   document.getElementById("pendingCount").textContent = allRows.filter(
-    (r) => r.status === "Pending"
+    (r) => r.status === "Pending",
   ).length;
 
   document.getElementById("inProgressCount").textContent = allRows.filter(
-    (r) => r.status === "In Progress"
+    (r) => r.status === "In Progress",
   ).length;
 
   document.getElementById("completedCount").textContent = allRows.filter(
-    (r) => r.status === "Completed"
+    (r) => r.status === "Completed",
   ).length;
 }
 
@@ -214,20 +221,29 @@ function renderTable() {
 // UPDATE STATUS
 // ================================
 async function updateStatus(id, status) {
-  const { error } = await supabaseClient
-    .from("contact_form")
-    .update({ status })
-    .eq("id", id);
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch(`http://localhost:5000/api/contacts/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Failed to update status");
+    }
+
+    showToast(`Status updated to "${status}"`, "success");
+    fetchData();
+  } catch (error) {
     console.error("Update error:", error);
     showToast("Failed to update status", "error");
-    return;
   }
-
-  showToast(`Status updated to "${status}"`, "success");
-
-  fetchData();
 }
 
 // ================================
@@ -236,17 +252,25 @@ async function updateStatus(id, status) {
 async function deleteRow(id) {
   if (!confirm("Delete this record?")) return;
 
-  const { error } = await supabaseClient
-    .from("contact_form")
-    .delete()
-    .eq("id", id);
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch(`http://localhost:5000/api/contacts/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (error) {
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Delete failed");
+    }
+
+    fetchData();
+  } catch (error) {
     console.error("Delete error:", error);
-    return;
   }
-
-  fetchData();
 }
 
 // ================================

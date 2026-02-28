@@ -14,11 +14,8 @@ window.supabaseClient =
 const supabaseClient = window.supabaseClient;
 
 (async () => {
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-
-  if (session) {
+  const token = localStorage.getItem("admin_token");
+  if (token) {
     window.location.replace("admin/contact");
   }
 })();
@@ -82,17 +79,14 @@ loginForm.addEventListener("submit", async (e) => {
   submitBtn.classList.add("loading");
 
   try {
-    const res = await fetch(
-      "https://hufqhcirhlbyslmexvgw.supabase.co/functions/v1/start-password-login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    const res = await fetch("http://localhost:5000/api/start-password-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
     const data = await res.json();
     submitBtn.classList.remove("loading");
@@ -135,44 +129,33 @@ verifyOtpBtn.addEventListener("click", async () => {
   verifyOtpBtn.classList.add("loading");
 
   try {
-    const res = await fetch(
-      "https://hufqhcirhlbyslmexvgw.supabase.co/functions/v1/verify-email-otp",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          email: cachedEmail,
-          otp,
-        }),
-      }
-    );
+    const res = await fetch("http://localhost:5000/api/verify-email-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        email: cachedEmail,
+        otp,
+      }),
+    });
 
     const data = await res.json();
 
-    if (!res.ok || !data.success) {
-      verifyOtpBtn.classList.remove("loading");
-      loginError.textContent = data.error || "Invalid OTP";
-      return;
-    }
-
-    // OTP verified → login
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email: cachedEmail,
-      password: cachedPassword,
-    });
-
     verifyOtpBtn.classList.remove("loading");
 
-    if (error) {
-      loginError.textContent = error.message;
-      return;
+    if (res.ok && data.success && data.step === "OTP_VERIFIED") {
+      // Store token (e.g. in localStorage)
+      localStorage.setItem("admin_token", data.token);
+      // SUCCESS
+      window.location.href = "admin/contact";
+    } else {
+      // else do nothing (or just show error if it wasn't successful)
+      if (!data.success) {
+        loginError.textContent = data.error || "Invalid OTP";
+      }
     }
-
-    // SUCCESS
-    window.location.href = "admin/contact";
   } catch (err) {
     verifyOtpBtn.classList.remove("loading");
     console.error(err);

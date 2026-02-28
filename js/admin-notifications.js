@@ -31,17 +31,17 @@ let SETTINGS_ID = null;
 // AUTH CHECK
 // ================================
 document.addEventListener("DOMContentLoaded", async () => {
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
+  const token = localStorage.getItem("admin_token");
 
-  if (!session) {
+  if (!token) {
     window.location.href = "/";
     return;
   }
 
   logoutBtn.onclick = async () => {
     await supabaseClient.auth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
   };
 
@@ -52,19 +52,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 // LOAD SETTINGS (SINGLE ROW)
 // ================================
 async function loadSettings() {
-  const { data, error } = await supabaseClient
-    .from("notification_settings")
-    .select("*")
-    .limit(1)
-    .single();
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch("http://localhost:5000/api/notification-settings", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (data) {
-    SETTINGS_ID = data.id;
-    toggle.checked = data.notification_enabled;
-    emailInput.value = (data.notification_emails || []).join(", ");
+    const body = await res.json();
+
+    if (!res.ok) {
+      throw new Error(body.error || "Failed to load settings");
+    }
+
+    const data = body.data;
+    if (data) {
+      SETTINGS_ID = data.id;
+      toggle.checked = data.notification_enabled;
+      emailInput.value = (data.notification_emails || []).join(", ");
+    }
+
+    syncUI();
+  } catch (error) {
+    console.error("Load settings error:", error);
+    showToast("Failed to load generic settings", "error");
   }
-
-  syncUI();
 }
 
 // ================================
@@ -79,15 +92,32 @@ function syncUI() {
 // ================================
 toggle.addEventListener("change", async () => {
   syncUI();
-  const { error } = await supabaseClient.from("notification_settings").upsert({
-    id: SETTINGS_ID,
-    notification_enabled: toggle.checked,
-  });
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch("http://localhost:5000/api/notification-settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        id: SETTINGS_ID,
+        notification_enabled: toggle.checked,
+        notification_emails: emailInput.value
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean),
+      }),
+    });
 
-  if (error) {
-    showToast("Failed to update setting", "error");
-  } else {
+    if (!res.ok) {
+      throw new Error("Failed to update setting");
+    }
+
     showToast("Notification emails updated", "success");
+  } catch (error) {
+    console.error("Update error:", error);
+    showToast("Failed to update setting", "error");
   }
 });
 
@@ -105,16 +135,29 @@ saveBtn.addEventListener("click", async () => {
     return;
   }
 
-  const { error } = await supabaseClient.from("notification_settings").upsert({
-    id: SETTINGS_ID,
-    notification_enabled: true,
-    notification_emails: emails,
-    updated_at: new Date(),
-  });
-  if (error) {
-    showToast("Failed to update emails", "error");
-  } else {
+  const token = localStorage.getItem("admin_token");
+  try {
+    const res = await fetch("http://localhost:5000/api/notification-settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        id: SETTINGS_ID,
+        notification_enabled: true,
+        notification_emails: emails,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update emails");
+    }
+
     showToast("Notification emails updated", "success");
+  } catch (error) {
+    console.error("Save error:", error);
+    showToast("Failed to update emails", "error");
   }
 });
 
