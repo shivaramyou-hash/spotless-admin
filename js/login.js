@@ -39,6 +39,28 @@ let cachedPassword = "";
 // OTP INPUT UX
 // ================================
 otpInputs.forEach((input, index) => {
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const pastedData = (e.clipboardData || window.clipboardData)
+      .getData("text")
+      .trim();
+    const digits = pastedData
+      .replace(/[^0-9]/g, "")
+      .slice(0, 6)
+      .split("");
+
+    digits.forEach((digit, i) => {
+      if (index + i < otpInputs.length) {
+        otpInputs[index + i].value = digit;
+        if (index + i < otpInputs.length - 1) {
+          otpInputs[index + i + 1].focus();
+        } else {
+          otpInputs[index + i].focus();
+        }
+      }
+    });
+  });
+
   input.addEventListener("input", () => {
     input.value = input.value.replace(/[^0-9]/g, "");
 

@@ -133,7 +133,6 @@ app.post("/api/start-password-login", async (req, res) => {
         `,
       }),
     });
-    console.log(emailRes, "emailRes");
     if (!emailRes.ok) {
       const err = await emailRes.text();
       console.error("Email API failed:", err);
