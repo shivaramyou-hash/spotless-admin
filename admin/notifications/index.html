@@ -1,84 +1,84 @@
 <!DOCTYPE html>
 <html lang="en-MU">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Notifications | Admin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Admin CSS -->
-    <link rel="stylesheet" href="/css/admin.css" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Notifications | Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- chome mobile panel color -->
-    <meta name="theme-color" content="#ffc169" />
-    <!-- favicon -->
-    <link rel="shortcut icon" href="/img/ui/favicon.png" type="image/x-icon" />
+  <!-- Admin CSS -->
+  <link rel="stylesheet" href="/css/admin.css" />
 
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  </head>
+  <!-- chome mobile panel color -->
+  <meta name="theme-color" content="#ffc169" />
+  <!-- favicon -->
+  <link rel="shortcut icon" href="/img/ui/favicon.png" type="image/x-icon" />
 
-  <body>
-    <div class="container">
-      <!-- HEADER -->
-      <div class="header-bar">
-        <div>
-          <h1>Notifications</h1>
-          <p class="subtitle">Manage notification email settings</p>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header-bar">
+      <div>
+        <h1>Notifications</h1>
+        <p class="subtitle">Manage notification email settings</p>
+      </div>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-bar">
+      <a href="/admin/contact/" class="tab-btn">Contact Us</a>
+      <a href="/admin/callback/" class="tab-btn">Callback</a>
+      <a href="/admin/notifications/" class="tab-btn active">
+        Notifications
+      </a>
+      <a href="/admin/invoice/" class="tab-btn"> Invoice </a>
+    </div>
+
+    <!-- NOTIFICATIONS PANEL -->
+    <div class="notification-panel">
+      <div class="notification-card">
+        <!-- TOGGLE -->
+        <div class="notification-toggle">
+          <label class="switch">
+            <input type="checkbox" id="enableNotifications" />
+            <span class="slider"></span>
+          </label>
+
+          <div class="toggle-text">
+            <h3>Enable Email Notifications</h3>
+            <p>Receive notifications for new contact & callback requests</p>
+          </div>
         </div>
 
-        <button id="logoutBtn" class="logout-btn">Logout</button>
-      </div>
+        <!-- FORM -->
+        <div id="emailForm" class="email-form hidden">
+          <label class="email-label">Notification Emails</label>
+          <p class="email-hint">Comma separated email addresses</p>
 
-      <!-- TABS -->
-      <div class="tabs-bar">
-        <a href="/admin/contact/" class="tab-btn">Contact Us</a>
-        <a href="/admin/callback/" class="tab-btn">Callback</a>
-        <a href="/admin/notifications/" class="tab-btn active">
-          Notifications
-        </a>
-      </div>
+          <textarea id="notificationEmails" class="email-textarea"
+            placeholder="admin@example.com, support@example.com"></textarea>
 
-      <!-- NOTIFICATIONS PANEL -->
-      <div class="notification-panel">
-        <div class="notification-card">
-          <!-- TOGGLE -->
-          <div class="notification-toggle">
-            <label class="switch">
-              <input type="checkbox" id="enableNotifications" />
-              <span class="slider"></span>
-            </label>
-
-            <div class="toggle-text">
-              <h3>Enable Email Notifications</h3>
-              <p>Receive notifications for new contact & callback requests</p>
-            </div>
-          </div>
-
-          <!-- FORM -->
-          <div id="emailForm" class="email-form hidden">
-            <label class="email-label">Notification Emails</label>
-            <p class="email-hint">Comma separated email addresses</p>
-
-            <textarea
-              id="notificationEmails"
-              class="email-textarea"
-              placeholder="admin@example.com, support@example.com"
-            ></textarea>
-
-            <div class="form-actions">
-              <button id="saveEmailsBtn" class="primary-btn">
-                Update Emails
-              </button>
-            </div>
+          <div class="form-actions">
+            <button id="saveEmailsBtn" class="primary-btn">
+              Update Emails
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- TOAST -->
-    <div id="toast" class="toast"></div>
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
 
-    <!-- SCRIPT -->
-    <script src="/js/admin-notifications.js"></script>
-  </body>
+  <!-- SCRIPT -->
+  <script src="/js/admin-notifications.js"></script>
+</body>
+
 </html>
