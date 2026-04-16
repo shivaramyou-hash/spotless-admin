@@ -198,24 +198,67 @@
 
     .preview-container {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       padding: 40px;
       background: #e2e8f0;
       overflow-y: auto;
-      gap: 30px;
+      display: block;
     }
 
-    .invoice-container, .terms-page, .acceptance-form {
+    #printable-quotation {
+      width: 210mm;
+      margin: 0 auto;
+    }
+
+    .invoice-container,
+    .terms-page,
+    .acceptance-form {
       background: var(--white);
       width: 210mm;
+      margin: 0 auto 50px auto;
       min-height: 297mm;
-      padding: 60px 50px;
+      height: auto;
+      padding: 70px 60px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
+      display: block;
+    }
+
+    /* Page Break Prevention */
+    .invoice-table tr,
+    .summary-container,
+    .conditions-section,
+    .bank-details-section,
+    .acceptance-form,
+    .terms-page {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* PDF Capture Mode Overrides */
+    .pdf-capture-mode .invoice-container,
+    .pdf-capture-mode .terms-page,
+    .pdf-capture-mode .acceptance-form {
+      margin: 0 !important;
+      box-shadow: none !important;
+      padding: 80px 60px !important;
+      box-sizing: border-box;
+    }
+
+    .pdf-capture-mode .invoice-container,
+    .pdf-capture-mode .terms-page {
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 60px 60px !important;
+    }
+
+    .pdf-capture-mode #quotation-body-flow {
+      min-height: 297.1mm !important;
+    }
+
+    .pdf-capture-mode .acceptance-form {
+      min-height: 297.1mm !important;
+      margin: 0 !important;
+      padding: 80px 60px !important;
     }
 
     .invoice-header {
@@ -367,8 +410,9 @@
     .total-row td {
       font-size: 18px !important;
       font-weight: 800;
-      padding: 20px 15px !important;
+      padding: 15px !important;
       color: white !important;
+      border: none !important;
     }
 
     .total-row td:last-child {
@@ -445,6 +489,17 @@
     }
 
     /* Acceptance Form Styles */
+    /* Page Break Prevention */
+    .invoice-table tr,
+    .summary-container,
+    .conditions-section,
+    .bank-details-section,
+    .acceptance-form,
+    .terms-page {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
     .acceptance-title {
       text-align: center;
       font-weight: 800;
@@ -770,188 +825,195 @@
         </div>
 
         <div class="preview-container">
-          <!-- Page 1: Main Quotation -->
-          <div class="invoice-container" id="quotation-page-1">
-            <div class="invoice-header">
-              <div class="logo-section">
-                <img src="../../img/ui/logo2.png" alt="Logo" />
-                <div class="company-name">{{ businessInfo.name }}</div>
-              </div>
-              <div class="vat-title">
-                <h1>QUOTATION</h1>
-              </div>
-            </div>
-
-            <div class="info-grid">
-              <div class="company-info">
-                <p><strong>{{ businessInfo.name }}</strong></p>
-                <p>Address: {{ businessInfo.address }}</p>
-                <p>Phone: {{ businessInfo.phone }}</p>
-                <p>Email: {{ businessInfo.email }}</p>
-                <p>Website: {{ businessInfo.website }}</p>
-                <p>BRN: {{ businessInfo.brn }}</p>
-                <p>VAT Reg No: {{ businessInfo.vatReg }}</p>
-              </div>
-              <div class="invoice-info">
-                <p>
-                  <strong>Quotation No:</strong>
-                  <span>{{ quotationMetadata.quotationNo }}</span>
-                </p>
-                <p>
-                  <strong>Date:</strong> <span>{{ formatDate(quotationMetadata.date) }}</span>
-                </p>
-                <p>
-                  <strong>Validity:</strong>
-                  <span>{{ quotationMetadata.validity }}</span>
-                </p>
-              </div>
-            </div>
-
-            <div class="billing-section">
-              <div class="bill-to">
-                <h3>BILL TO:</h3>
-                <p>{{ clientInfo.name }}</p>
-                <p style="white-space: pre-line">{{ clientInfo.address }}</p>
-              </div>
-              <div class="service-location">
-                <h3>SERVICE LOCATION:</h3>
-                <p style="white-space: pre-line">
-                  {{ clientInfo.serviceLocation }}
-                </p>
-              </div>
-            </div>
-
-            <table class="invoice-table">
-              <thead>
-                <tr>
-                  <th class="text-center" style="width: 60px">No.</th>
-                  <th>Description of Services / Goods</th>
-                  <th class="text-center" style="width: 80px">Quantity</th>
-                  <th class="text-right" style="width: 120px">
-                    Unit Price (MUR)
-                  </th>
-                  <th class="text-right" style="width: 140px">
-                    Total Amount (MUR)
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in items" :key="item.id">
-                  <td class="text-center">{{ index + 1 }}</td>
-                  <td>{{ item.desc || "New Service Line Item" }}</td>
-                  <td class="text-center">{{ item.qty }}</td>
-                  <td class="text-right">
-                    {{ formatNumber(item.unitPrice) }}
-                  </td>
-                  <td class="text-right">
-                    {{ formatNumber(item.qty * item.unitPrice) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="summary-container">
-              <table class="summary-table">
-                <tbody>
-                  <tr>
-                    <td>Subtotal (Excl. VAT)</td>
-                    <td class="text-right">{{ formatNumber(totals.subtotal) }}</td>
-                  </tr>
-                  <tr>
-                    <td>VAT ({{ vatRate }}%)</td>
-                    <td class="text-right">
-                      {{ formatNumber(totals.vatAmount, 2) }}
-                    </td>
-                  </tr>
-                  <tr class="total-row">
-                    <td>TOTAL AMOUNT (MUR)</td>
-                    <td class="text-right">
-                      {{ formatNumber(totals.totalPayable) }}
-                    </td>
-                  </tr>
-                  <tr class="words-row">
-                    <td colspan="2">
-                      Total Amount in Words: {{ totalInWords }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="thank-you" style="text-align: right; margin-top: auto;">Thank you for your business!</div>
-          </div>
-
-          <!-- Page 2: Terms & Bank Details -->
-          <div class="terms-page" id="quotation-page-2">
-            <div class="conditions-section">
-              <h4>CONDITIONS</h4>
-              <p>In case of acceptance of offer:</p>
-              <ul>
-                <li>Please note payment should be done by the 28th of every month into the company account below</li>
-                <li>Electricity points and water points should be made available and accessible by client.</li>
-                <li>Upon completion of cleaning operations, client's representative should be on site to check work
-                  effect</li>
-                <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
-                  MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
-                <li>The quotation is valid for a period of 15 days.</li>
-              </ul>
-            </div>
-
-            <div class="bank-details-section">
-              <h4>BANK DETAILS</h4>
-              <div class="bank-grid">
-                <div>Bank Name:</div>
-                <div>Mauritius Commercial Bank Ltd. (MCB)</div>
-                <div>Account Name:</div>
-                <div>Spotless Mauritius Contracting Ltd.</div>
-                <div>Account Number:</div>
-                <div>000453727611</div>
-                <div>IBAN Number:</div>
-                <div>MU45MCBL0901000453727611030MUR</div>
-                <div>Swift Code:</div>
-                <div>MCBLMUMU</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Page 3: Client Acceptance Form -->
-          <div v-if="showAcceptanceForm" class="acceptance-form" id="quotation-page-3">
-            <div class="acceptance-title">
-              CLIENT ACCEPTANCE FORM FOR QUOTATION {{ quotationMetadata.quotationNo }}
-            </div>
-
-            <div class="acceptance-body">
-              I <span class="dotted-line"></span> representative of
-              <span class="dotted-line">{{ clientInfo.name || '................................................................' }}</span>
-              hereby accept to proceed with daily cleaning services as per above conditions and rate
-              <strong>Rs. {{ formatNumber(totals.subtotal) }}</strong> vat exclusive
-            </div>
-
-            <div class="signature-grid">
-              <div class="sig-block">
-                <h4>APPROVED BY:</h4>
-                <div class="sig-line">
-                  SIGNATURE: <div class="sig-field"></div>
+          <div id="printable-quotation">
+            <div id="quotation-body-flow">
+              <!-- Page 1: Main Quotation -->
+              <div class="invoice-container" id="quotation-page-1">
+                <div class="invoice-header">
+                  <div class="logo-section">
+                    <img src="../../img/ui/logo2.png" alt="Logo" />
+                    <div class="company-name">{{ businessInfo.name }}</div>
+                  </div>
+                  <div class="vat-title">
+                    <h1>QUOTATION</h1>
+                  </div>
                 </div>
-                <div class="sig-line">
-                  DATE: <div class="sig-field"></div>
+
+                <div class="info-grid">
+                  <div class="company-info">
+                    <p><strong>{{ businessInfo.name }}</strong></p>
+                    <p>Address: {{ businessInfo.address }}</p>
+                    <p>Phone: {{ businessInfo.phone }}</p>
+                    <p>Email: {{ businessInfo.email }}</p>
+                    <p>Website: {{ businessInfo.website }}</p>
+                    <p>BRN: {{ businessInfo.brn }}</p>
+                    <p>VAT Reg No: {{ businessInfo.vatReg }}</p>
+                  </div>
+                  <div class="invoice-info">
+                    <p>
+                      <strong>Quotation No:</strong>
+                      <span>{{ quotationMetadata.quotationNo }}</span>
+                    </p>
+                    <p>
+                      <strong>Date:</strong> <span>{{ formatDate(quotationMetadata.date) }}</span>
+                    </p>
+                    <p>
+                      <strong>Validity:</strong>
+                      <span>{{ quotationMetadata.validity }}</span>
+                    </p>
+                  </div>
                 </div>
+
+                <div class="billing-section">
+                  <div class="bill-to">
+                    <h3>BILL TO:</h3>
+                    <p>{{ clientInfo.name }}</p>
+                    <p style="white-space: pre-line">{{ clientInfo.address }}</p>
+                  </div>
+                  <div class="service-location">
+                    <h3>SERVICE LOCATION:</h3>
+                    <p style="white-space: pre-line">
+                      {{ clientInfo.serviceLocation }}
+                    </p>
+                  </div>
+                </div>
+
+                <table class="invoice-table">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 60px">No.</th>
+                      <th>Description of Services / Goods</th>
+                      <th class="text-center" style="width: 80px">Quantity</th>
+                      <th class="text-right" style="width: 120px">
+                        Unit Price (MUR)
+                      </th>
+                      <th class="text-right" style="width: 140px">
+                        Total Amount (MUR)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in items" :key="item.id">
+                      <td class="text-center">{{ index + 1 }}</td>
+                      <td>{{ item.desc || "New Service Line Item" }}</td>
+                      <td class="text-center">{{ item.qty }}</td>
+                      <td class="text-right">
+                        {{ formatNumber(item.unitPrice) }}
+                      </td>
+                      <td class="text-right">
+                        {{ formatNumber(item.qty * item.unitPrice) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="summary-container" style="display: flex; justify-content: flex-end; margin-top: 50px;">
+                  <table class="summary-table">
+                    <tbody>
+                      <tr>
+                        <td>Subtotal (Excl. VAT)</td>
+                        <td class="text-right">{{ formatNumber(totals.subtotal) }}</td>
+                      </tr>
+                      <tr>
+                        <td>VAT ({{ vatRate }}%)</td>
+                        <td class="text-right">
+                          {{ formatNumber(totals.vatAmount, 2) }}
+                        </td>
+                      </tr>
+                      <tr class="total-row">
+                        <td>TOTAL AMOUNT (MUR)</td>
+                        <td class="text-right">
+                          {{ formatNumber(totals.totalPayable) }}
+                        </td>
+                      </tr>
+                      <tr class="words-row">
+                        <td colspan="2">
+                          Total Amount in Words: {{ totalInWords }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="thank-you"
+                  style="text-align: right; margin-top: 60px; font-weight: 600; color: var(--text-gray);">Thank you for
+                  your
+                  business!</div>
               </div>
 
-              <div class="sig-block">
-                <h4>CERTIFIED BY:</h4>
-                <div class="sig-line">
-                  SIGNATURE: <div class="sig-field"></div>
+              <!-- Page 2: Terms & Bank Details -->
+              <div class="terms-page" id="quotation-page-2">
+                <div class="conditions-section">
+                  <h4>CONDITIONS</h4>
+                  <p>In case of acceptance of offer:</p>
+                  <ul>
+                    <li>Please note payment should be done by the 28th of every month into the company account below</li>
+                    <li>Electricity points and water points should be made available and accessible by client.</li>
+                    <li>Upon completion of cleaning operations, client's representative should be on site to check work
+                      effect</li>
+                    <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
+                      MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
+                    <li>The quotation is valid for a period of 15 days.</li>
+                  </ul>
                 </div>
-                <div class="sig-line">
-                  DATE: <div class="sig-field"></div>
+
+                <div class="bank-details-section">
+                  <h4>BANK DETAILS</h4>
+                  <div class="bank-grid">
+                    <div>Bank Name:</div>
+                    <div>Mauritius Commercial Bank Ltd. (MCB)</div>
+                    <div>Account Name:</div>
+                    <div>Spotless Mauritius Contracting Ltd.</div>
+                    <div>Account Number:</div>
+                    <div>000453727611</div>
+                    <div>IBAN Number:</div>
+                    <div>MU45MCBL0901000453727611030MUR</div>
+                    <div>Swift Code:</div>
+                    <div>MCBLMUMU</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="acceptance-footer">
-              <p>Do not hesitate to contact us for further clarifications.</p>
-              <p class="thank-you-blue">Thank you</p>
+            <!-- Page 3: Client Acceptance Form -->
+            <div v-if="showAcceptanceForm" class="acceptance-form" id="quotation-page-3">
+              <div class="acceptance-title">
+                CLIENT ACCEPTANCE FORM FOR QUOTATION {{ quotationMetadata.quotationNo }}
+              </div>
+
+              <div class="acceptance-body">
+                I <span class="dotted-line"></span> representative of
+                <span class="dotted-line">{{ clientInfo.name ||
+                  '................................................................' }}</span>
+                hereby accept to proceed with daily cleaning services as per above conditions and rate
+                <strong>Rs. {{ formatNumber(totals.subtotal) }}</strong> vat exclusive
+              </div>
+
+              <div class="signature-grid">
+                <div class="sig-block">
+                  <h4>APPROVED BY:</h4>
+                  <div class="sig-line">
+                    SIGNATURE: <div class="sig-field"></div>
+                  </div>
+                  <div class="sig-line">
+                    DATE: <div class="sig-field"></div>
+                  </div>
+                </div>
+
+                <div class="sig-block">
+                  <h4>CERTIFIED BY:</h4>
+                  <div class="sig-line">
+                    SIGNATURE: <div class="sig-field"></div>
+                  </div>
+                  <div class="sig-line">
+                    DATE: <div class="sig-field"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="acceptance-footer">
+                <p>Do not hesitate to contact us for further clarifications.</p>
+                <p class="thank-you-blue">Thank you</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1061,41 +1123,39 @@
         const handlePrint = () => {
           window.print();
         };
-
         const handleDownloadPDF = async () => {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF("p", "mm", "a4");
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = pdf.internal.pageSize.getHeight();
 
-          // Helper function to add and slice components into PDF
-          const addComponentToPdf = async (elementId, startOnNewPage = true) => {
-            const element = document.getElementById(elementId);
+          const addSectionToPdf = async (id, forceNewPage) => {
+            const element = document.getElementById(id);
             if (!element) return;
+
+            if (forceNewPage && pdf.internal.getNumberOfPages() > 0) {
+              pdf.addPage();
+            }
 
             const canvas = await html2canvas(element, {
               scale: 2,
               useCORS: true,
               logging: false,
+              backgroundColor: "#ffffff",
+              windowWidth: 1122
             });
-            
+
             const imgData = canvas.toDataURL("image/png");
             const imgWidth = pdfWidth;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
+
             let heightLeft = imgHeight;
             let position = 0;
 
-            // Page 1 of this component
-            if (startOnNewPage && pdf.internal.getNumberOfPages() > 0) {
-              pdf.addPage();
-            }
-            
             pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
             heightLeft -= pdfHeight;
 
-            // Handle overflow by adding more pages and shifting image
-            while (heightLeft >= 1) { // 1mm threshold
+            while (heightLeft > 10) {
               position = heightLeft - imgHeight;
               pdf.addPage();
               pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
@@ -1103,15 +1163,24 @@
             }
           };
 
-          // Capture All 3 Pages
-          await addComponentToPdf("quotation-page-1", false); // Starts on existing 1st page
-          await addComponentToPdf("quotation-page-2", true);  // Terms & Bank Details
-          
-          if (showAcceptanceForm.value) {
-            await addComponentToPdf("quotation-page-3", true); // Acceptance Form
-          }
+          try {
+            const container = document.getElementById("printable-quotation");
+            container.classList.add("pdf-capture-mode");
 
-          pdf.save(`Quotation_${quotationMetadata.value.quotationNo}.pdf`);
+            // 1. Capture Quotation Body Flow (Quote + Terms together)
+            await addSectionToPdf("quotation-body-flow", false);
+            
+            // 2. Capture Acceptance Form (Strictly start on next page)
+            if (showAcceptanceForm.value) {
+              await addSectionToPdf("quotation-page-3", true);
+            }
+
+            container.classList.remove("pdf-capture-mode");
+            pdf.save(`Quotation_${quotationMetadata.value.quotationNo}.pdf`);
+          } catch (error) {
+            console.error("PDF Error:", error);
+            alert("Error downloading PDF.");
+          }
         };
 
         const formatNumber = (num, decimals = 0) => {
