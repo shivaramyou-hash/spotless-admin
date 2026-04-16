@@ -199,17 +199,19 @@
     .preview-container {
       flex: 1;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       padding: 40px;
       background: #e2e8f0;
       overflow-y: auto;
+      gap: 30px;
     }
 
-    .invoice-container {
+    .invoice-container, .terms-page, .acceptance-form {
       background: var(--white);
       width: 210mm;
       min-height: 297mm;
-      padding: 40px;
+      padding: 60px 50px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
       display: flex;
@@ -228,15 +230,15 @@
     }
 
     .logo-section img {
-      height: 80px;
+      height: 55px;
       width: auto;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       object-fit: contain;
     }
 
     .company-name {
       font-weight: 800;
-      font-size: 24px;
+      font-size: 20px;
       color: var(--primary-blue);
       line-height: 1;
     }
@@ -435,6 +437,79 @@
 
     .bank-grid div:nth-child(odd) {
       font-weight: 700;
+    }
+
+    /* Terms Page Specific Styles */
+    .terms-page h4 {
+      margin-top: 0;
+    }
+
+    /* Acceptance Form Styles */
+    .acceptance-title {
+      text-align: center;
+      font-weight: 800;
+      font-size: 18px;
+      text-decoration: underline;
+      margin-bottom: 50px;
+      text-transform: uppercase;
+      color: var(--primary-blue);
+    }
+
+    .acceptance-body {
+      line-height: 2;
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+
+    .dotted-line {
+      display: inline-block;
+      min-width: 250px;
+      border-bottom: 1px dotted #000;
+      margin: 0 5px;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      margin-top: 30px;
+    }
+
+    .sig-block h4 {
+      margin: 0 0 15px 0;
+      color: #2c5282;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .sig-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sig-field {
+      border-bottom: 1px dotted #000;
+      flex: 1;
+      margin-left: 10px;
+      height: 18px;
+    }
+
+    .acceptance-footer {
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    .acceptance-footer p {
+      margin: 5px 0;
+    }
+
+    .thank-you-blue {
+      color: #3182ce;
+      font-weight: 600;
+      margin-top: 10px;
     }
 
     .thank-you {
@@ -676,6 +751,11 @@
 
               <label>Total in Words</label>
               <input type="text" v-model="totalInWords" />
+
+              <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" v-model="showAcceptanceForm" style="width: auto; margin: 0;">
+                <label style="margin: 0;">Include Client Acceptance Form</label>
+              </div>
             </div>
           </div>
 
@@ -690,7 +770,8 @@
         </div>
 
         <div class="preview-container">
-          <div class="invoice-container" id="quotation-render">
+          <!-- Page 1: Main Quotation -->
+          <div class="invoice-container" id="quotation-page-1">
             <div class="invoice-header">
               <div class="logo-section">
                 <img src="../../img/ui/logo2.png" alt="Logo" />
@@ -797,38 +878,80 @@
               </table>
             </div>
 
-            <div class="invoice-footer">
-              <div class="conditions-section">
-                <h4>CONDITIONS</h4>
-                <p>In case of acceptance of offer:</p>
-                <ul>
-                  <li>Please note payment should be done by the 28th of every month into the company account below</li>
-                  <li>Electricity points and water points should be made available and accessible by client.</li>
-                  <li>Upon completion of cleaning operations, client's representative should be on site to check work
-                    effect</li>
-                  <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
-                    MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
-                  <li>The quotation is valid for a period of 15 days.</li>
-                </ul>
-              </div>
+            <div class="thank-you" style="text-align: right; margin-top: auto;">Thank you for your business!</div>
+          </div>
 
-              <div class="bank-details-section">
-                <h4>BANK DETAILS</h4>
-                <div class="bank-grid">
-                  <div>Bank Name:</div>
-                  <div>Mauritius Commercial Bank Ltd. (MCB)</div>
-                  <div>Account Name:</div>
-                  <div>Spotless Mauritius Contracting Ltd.</div>
-                  <div>Account Number:</div>
-                  <div>000453727611</div>
-                  <div>IBAN Number:</div>
-                  <div>MU45MCBL0901000453727611030MUR</div>
-                  <div>Swift Code:</div>
-                  <div>MCBLMUMU</div>
+          <!-- Page 2: Terms & Bank Details -->
+          <div class="terms-page" id="quotation-page-2">
+            <div class="conditions-section">
+              <h4>CONDITIONS</h4>
+              <p>In case of acceptance of offer:</p>
+              <ul>
+                <li>Please note payment should be done by the 28th of every month into the company account below</li>
+                <li>Electricity points and water points should be made available and accessible by client.</li>
+                <li>Upon completion of cleaning operations, client's representative should be on site to check work
+                  effect</li>
+                <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
+                  MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
+                <li>The quotation is valid for a period of 15 days.</li>
+              </ul>
+            </div>
+
+            <div class="bank-details-section">
+              <h4>BANK DETAILS</h4>
+              <div class="bank-grid">
+                <div>Bank Name:</div>
+                <div>Mauritius Commercial Bank Ltd. (MCB)</div>
+                <div>Account Name:</div>
+                <div>Spotless Mauritius Contracting Ltd.</div>
+                <div>Account Number:</div>
+                <div>000453727611</div>
+                <div>IBAN Number:</div>
+                <div>MU45MCBL0901000453727611030MUR</div>
+                <div>Swift Code:</div>
+                <div>MCBLMUMU</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page 3: Client Acceptance Form -->
+          <div v-if="showAcceptanceForm" class="acceptance-form" id="quotation-page-3">
+            <div class="acceptance-title">
+              CLIENT ACCEPTANCE FORM FOR QUOTATION {{ quotationMetadata.quotationNo }}
+            </div>
+
+            <div class="acceptance-body">
+              I <span class="dotted-line"></span> representative of
+              <span class="dotted-line">{{ clientInfo.name || '................................................................' }}</span>
+              hereby accept to proceed with daily cleaning services as per above conditions and rate
+              <strong>Rs. {{ formatNumber(totals.subtotal) }}</strong> vat exclusive
+            </div>
+
+            <div class="signature-grid">
+              <div class="sig-block">
+                <h4>APPROVED BY:</h4>
+                <div class="sig-line">
+                  SIGNATURE: <div class="sig-field"></div>
+                </div>
+                <div class="sig-line">
+                  DATE: <div class="sig-field"></div>
                 </div>
               </div>
 
-              <div class="thank-you">Thank you for your business!</div>
+              <div class="sig-block">
+                <h4>CERTIFIED BY:</h4>
+                <div class="sig-line">
+                  SIGNATURE: <div class="sig-field"></div>
+                </div>
+                <div class="sig-line">
+                  DATE: <div class="sig-field"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="acceptance-footer">
+              <p>Do not hesitate to contact us for further clarifications.</p>
+              <p class="thank-you-blue">Thank you</p>
             </div>
           </div>
         </div>
@@ -874,6 +997,7 @@
 
         const vatRate = ref(15);
         const totalInWords = ref("");
+        const showAcceptanceForm = ref(true);
 
         const totals = computed(() => {
           const subtotal = items.value.reduce(
@@ -939,18 +1063,54 @@
         };
 
         const handleDownloadPDF = async () => {
-          const element = document.getElementById("quotation-render");
-          const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-          });
-          const imgData = canvas.toDataURL("image/png");
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF("p", "mm", "a4");
           const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+
+          // Helper function to add and slice components into PDF
+          const addComponentToPdf = async (elementId, startOnNewPage = true) => {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const canvas = await html2canvas(element, {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+            });
+            
+            const imgData = canvas.toDataURL("image/png");
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // Page 1 of this component
+            if (startOnNewPage && pdf.internal.getNumberOfPages() > 0) {
+              pdf.addPage();
+            }
+            
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+
+            // Handle overflow by adding more pages and shifting image
+            while (heightLeft >= 1) { // 1mm threshold
+              position = heightLeft - imgHeight;
+              pdf.addPage();
+              pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+              heightLeft -= pdfHeight;
+            }
+          };
+
+          // Capture All 3 Pages
+          await addComponentToPdf("quotation-page-1", false); // Starts on existing 1st page
+          await addComponentToPdf("quotation-page-2", true);  // Terms & Bank Details
+          
+          if (showAcceptanceForm.value) {
+            await addComponentToPdf("quotation-page-3", true); // Acceptance Form
+          }
+
           pdf.save(`Quotation_${quotationMetadata.value.quotationNo}.pdf`);
         };
 
@@ -978,6 +1138,7 @@
           items,
           vatRate,
           totalInWords,
+          showAcceptanceForm,
           totals,
           addItem,
           removeItem,
