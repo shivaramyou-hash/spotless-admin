@@ -385,6 +385,58 @@
       padding-top: 20px;
     }
 
+    .conditions-section {
+      margin-bottom: 25px;
+      font-size: 13px;
+    }
+
+    .conditions-section h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--primary-blue);
+      border-bottom: 1px solid var(--table-border);
+      padding-bottom: 5px;
+    }
+
+    .conditions-section p {
+      margin: 5px 0;
+      font-weight: 700;
+    }
+
+    .conditions-section ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+
+    .conditions-section li {
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .bank-details-section {
+      font-size: 13px;
+    }
+
+    .bank-details-section h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--primary-blue);
+      border-bottom: 1px solid var(--table-border);
+      padding-bottom: 5px;
+    }
+
+    .bank-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 4px;
+    }
+
+    .bank-grid div:nth-child(odd) {
+      font-weight: 700;
+    }
+
     .thank-you {
       text-align: center;
       margin-top: 40px;
@@ -746,6 +798,36 @@
             </div>
 
             <div class="invoice-footer">
+              <div class="conditions-section">
+                <h4>CONDITIONS</h4>
+                <p>In case of acceptance of offer:</p>
+                <ul>
+                  <li>Please note payment should be done by the 28th of every month into the company account below</li>
+                  <li>Electricity points and water points should be made available and accessible by client.</li>
+                  <li>Upon completion of cleaning operations, client's representative should be on site to check work
+                    effect</li>
+                  <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
+                    MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
+                  <li>The quotation is valid for a period of 15 days.</li>
+                </ul>
+              </div>
+
+              <div class="bank-details-section">
+                <h4>BANK DETAILS</h4>
+                <div class="bank-grid">
+                  <div>Bank Name:</div>
+                  <div>Mauritius Commercial Bank Ltd. (MCB)</div>
+                  <div>Account Name:</div>
+                  <div>Spotless Mauritius Contracting Ltd.</div>
+                  <div>Account Number:</div>
+                  <div>000453727611</div>
+                  <div>IBAN Number:</div>
+                  <div>MU45MCBL0901000453727611030MUR</div>
+                  <div>Swift Code:</div>
+                  <div>MCBLMUMU</div>
+                </div>
+              </div>
+
               <div class="thank-you">Thank you for your business!</div>
             </div>
           </div>
@@ -762,7 +844,7 @@
         const quotationMetadata = ref({
           quotationNo: "",
           date: new Date().toISOString().split('T')[0],
-          validity: "30 Days",
+          validity: "15 Days",
         });
 
         const clientInfo = ref({
