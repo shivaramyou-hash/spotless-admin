@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spotless Mauritius - VAT Invoice Generator</title>
+  <title>Spotless Mauritius - Quotation Generator</title>
 
   <!-- Google Fonts -->
   <link
@@ -187,45 +187,6 @@
       background: white;
     }
 
-    .flex-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .btn-add,
-    .btn-default {
-      background: var(--success-green);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: opacity 0.2s;
-    }
-
-    .btn-default {
-      background: var(--primary-blue);
-    }
-
-    .btn-add:hover,
-    .btn-default:hover {
-      opacity: 0.9;
-    }
-
-    .item-row-edit {
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      border: 1px solid var(--table-border);
-      position: relative;
-    }
-
     .qty-price {
       display: flex;
       gap: 10px;
@@ -235,17 +196,6 @@
       margin-bottom: 0;
     }
 
-    .btn-remove {
-      background: #feb2b2;
-      color: #c53030;
-      border: none;
-      width: 40px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 20px;
-    }
-
-    /* Preview Styles */
     .preview-container {
       flex: 1;
       display: flex;
@@ -266,7 +216,6 @@
       flex-direction: column;
     }
 
-    /* Original Invoice Component Styles */
     .invoice-header {
       display: flex;
       justify-content: space-between;
@@ -290,12 +239,6 @@
       font-size: 24px;
       color: var(--primary-blue);
       line-height: 1;
-    }
-
-    .company-sub {
-      color: var(--success-green);
-      font-size: 18px;
-      font-weight: 600;
     }
 
     .vat-title h1 {
@@ -442,12 +385,6 @@
       padding-top: 20px;
     }
 
-    .bank-details,
-    .payment-methods {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
     .thank-you {
       text-align: center;
       margin-top: 40px;
@@ -493,6 +430,50 @@
       flex: 1;
     }
 
+    .btn-add,
+    .btn-default {
+      background: var(--success-green);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+
+    .btn-default {
+      background: var(--primary-blue);
+    }
+
+    .flex-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .item-row-edit {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid var(--table-border);
+      position: relative;
+    }
+
+    .btn-remove {
+      background: #feb2b2;
+      color: #c53030;
+      border: none;
+      width: 40px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
     @media print {
       .no-print {
         display: none !important;
@@ -523,8 +504,8 @@
         <!-- HEADER -->
         <div class="header-bar">
           <div>
-            <h1>VAT Invoice</h1>
-            <p class="subtitle">Manage and generate customer invoices</p>
+            <h1>Quotation</h1>
+            <p class="subtitle">Manage and generate customer quotations</p>
           </div>
 
           <div class="header-actions">
@@ -532,23 +513,21 @@
           </div>
         </div>
 
-        <!-- TABS (Relative to the project structure) -->
+        <!-- TABS -->
         <div class="tabs-bar">
           <a href="/admin/contact/" class="tab-btn"> Contact Us </a>
           <a href="/admin/callback/" class="tab-btn"> Callback </a>
           <a href="/admin/notifications/" class="tab-btn"> Notifications </a>
-          <a href="/admin/invoice/" class="tab-btn active"> Invoice </a>
-          <a href="/admin/quotation/" class="tab-btn"> Quotation </a>
+          <a href="/admin/invoice/" class="tab-btn"> Invoice </a>
+          <a href="/admin/quotation/" class="tab-btn active"> Quotation </a>
         </div>
       </div>
 
       <div class="app-layout">
-        <!-- Editor Section at Top -->
         <div class="editor-sidebar no-print">
-          <h2>Invoice Editor</h2>
+          <h2>Quotation Editor</h2>
 
           <div class="editor-grid">
-            <!-- Business Info -->
             <div class="form-group">
               <div class="flex-header">
                 <h3>My Business Info</h3>
@@ -557,81 +536,78 @@
                 </button>
               </div>
               <label>Business Name</label>
-              <input type="text" placeholder="Business Name" v-model="businessInfo.name" />
+              <input type="text" v-model="businessInfo.name" />
 
               <label>Address</label>
-              <textarea placeholder="Address" rows="2" v-model="businessInfo.address"></textarea>
+              <textarea rows="2" v-model="businessInfo.address"></textarea>
 
               <div class="qty-price">
                 <div style="flex: 1">
                   <label>Phone</label>
-                  <input type="text" placeholder="Phone" v-model="businessInfo.phone" />
+                  <input type="text" v-model="businessInfo.phone" />
                 </div>
                 <div style="flex: 1">
                   <label>Email</label>
-                  <input type="text" placeholder="Email" v-model="businessInfo.email" />
+                  <input type="text" v-model="businessInfo.email" />
                 </div>
               </div>
 
               <label style="margin-top: 15px;">Website</label>
-              <input type="text" placeholder="Website" v-model="businessInfo.website" />
+              <input type="text" v-model="businessInfo.website" />
 
               <div class="qty-price">
                 <div style="flex: 1">
                   <label>BRN</label>
-                  <input type="text" placeholder="BRN" v-model="businessInfo.brn" />
+                  <input type="text" v-model="businessInfo.brn" />
                 </div>
                 <div style="flex: 1">
                   <label>VAT Reg No</label>
-                  <input type="text" placeholder="VAT Reg No" v-model="businessInfo.vatReg" />
+                  <input type="text" v-model="businessInfo.vatReg" />
                 </div>
               </div>
             </div>
 
-            <!-- Invoice Details -->
             <div class="form-group">
-              <h3>Invoice Details</h3>
-              <label style="margin-top:20px;">Invoice No</label>
-              <input type="text" placeholder="Invoice No" v-model="invoiceMetadata.invoiceNo" />
+              <h3>Quotation Details</h3>
+              <label style="margin-top:20px;">Quotation No</label>
+              <input type="text" v-model="quotationMetadata.quotationNo" />
 
               <label>Date</label>
-              <input type="date" v-model="invoiceMetadata.date" />
+              <input type="date" v-model="quotationMetadata.date" />
 
-              <label>Due Date</label>
-              <input type="date" v-model="invoiceMetadata.dueDate" />
+              <label>Validity</label>
+              <input type="text" placeholder="e.g. 30 Days" v-model="quotationMetadata.validity" />
             </div>
 
-            <!-- Client Info -->
             <div class="form-group">
               <h3>Client Information</h3>
               <label>Client Name</label>
-              <input type="text" placeholder="Client Name" v-model="clientInfo.name" />
+              <input type="text" v-model="clientInfo.name" />
 
               <label>Client Address</label>
-              <textarea placeholder="Client Address" v-model="clientInfo.address"></textarea>
+              <textarea v-model="clientInfo.address"></textarea>
 
               <label>Service Location</label>
-              <textarea placeholder="Service Location" v-model="clientInfo.serviceLocation"></textarea>
+              <textarea v-model="clientInfo.serviceLocation"></textarea>
             </div>
 
-            <!-- Line Items -->
-            <div class="form-group" style="grid-column: span 1;">
+            <div class="form-group">
               <div class="flex-header">
                 <h3>Line Items</h3>
                 <button class="btn-add" @click="addItem">+ Add Item</button>
               </div>
               <div v-for="(item, index) in items" :key="item.id" class="item-row-edit">
                 <label>Description</label>
-                <input type="text" placeholder="Description" v-model="item.desc" />
+                <input type="text" v-model="item.desc" />
 
                 <div class="qty-price">
                   <div style="flex: 1">
                     <label>Qty</label>
-                    <input type="number" placeholder="Qty" v-model.number="item.qty" />
+                    <input type="number" v-model.number="item.qty" />
                   </div>
                   <div style="flex: 1">
                     <label>Price</label>
-                    <input type="number" placeholder="Price" v-model.number="item.unitPrice" />
+                    <input type="number" v-model.number="item.unitPrice" />
                   </div>
                   <button class="btn-remove" @click="removeItem(item.id)"
                     style="align-self: flex-end; margin-bottom: 15px;">
@@ -641,14 +617,13 @@
               </div>
             </div>
 
-            <!-- VAT & Totals -->
             <div class="form-group">
               <h3>VAT & Totals</h3>
               <label>VAT Rate (%)</label>
               <input type="number" v-model.number="vatRate" />
 
               <label>Total in Words</label>
-              <input type="text" placeholder="Total in Words" v-model="totalInWords" />
+              <input type="text" v-model="totalInWords" />
             </div>
           </div>
 
@@ -657,21 +632,20 @@
               Download PDF
             </button>
             <button class="btn btn-print full-width" @click="handlePrint">
-              Print Invoice
+              Print Quotation
             </button>
           </div>
         </div>
 
-        <!-- Invoice Preview -->
         <div class="preview-container">
-          <div class="invoice-container" id="invoice-render">
+          <div class="invoice-container" id="quotation-render">
             <div class="invoice-header">
               <div class="logo-section">
                 <img src="../../img/ui/logo2.png" alt="Logo" />
                 <div class="company-name">{{ businessInfo.name }}</div>
               </div>
               <div class="vat-title">
-                <h1>VAT INVOICE</h1>
+                <h1>QUOTATION</h1>
               </div>
             </div>
 
@@ -687,19 +661,15 @@
               </div>
               <div class="invoice-info">
                 <p>
-                  <strong>Invoice No:</strong>
-                  <span>{{ invoiceMetadata.invoiceNo }}</span>
+                  <strong>Quotation No:</strong>
+                  <span>{{ quotationMetadata.quotationNo }}</span>
                 </p>
                 <p>
-                  <strong>Date:</strong> <span>{{ formatDate(invoiceMetadata.date) }}</span>
+                  <strong>Date:</strong> <span>{{ formatDate(quotationMetadata.date) }}</span>
                 </p>
                 <p>
-                  <strong>Payment Terms:</strong>
-                  <span>{{ invoiceMetadata.paymentTerms }}</span>
-                </p>
-                <p>
-                  <strong>Due Date:</strong>
-                  <span>{{ formatDate(invoiceMetadata.dueDate) }}</span>
+                  <strong>Validity:</strong>
+                  <span>{{ quotationMetadata.validity }}</span>
                 </p>
               </div>
             </div>
@@ -761,7 +731,7 @@
                     </td>
                   </tr>
                   <tr class="total-row">
-                    <td>TOTAL AMOUNT PAYABLE (MUR)</td>
+                    <td>TOTAL AMOUNT (MUR)</td>
                     <td class="text-right">
                       {{ formatNumber(totals.totalPayable) }}
                     </td>
@@ -776,14 +746,6 @@
             </div>
 
             <div class="invoice-footer">
-              <div class="payment-methods">
-                <strong>Payment Methods:</strong> Bank Transfer, Check
-              </div>
-              <div class="bank-details">
-                <strong>Bank Details:</strong> MCB Bank,
-                <strong>Account Name:</strong> Spotless Mauritius Contracting Ltd,
-                <strong>Account No:</strong> [Account Number]
-              </div>
               <div class="thank-you">Thank you for your business!</div>
             </div>
           </div>
@@ -797,11 +759,10 @@
 
     createApp({
       setup() {
-        const invoiceMetadata = ref({
-          invoiceNo: "",
+        const quotationMetadata = ref({
+          quotationNo: "",
           date: new Date().toISOString().split('T')[0],
-          paymentTerms: "Net 30 Days",
-          dueDate: "",
+          validity: "30 Days",
         });
 
         const clientInfo = ref({
@@ -844,10 +805,8 @@
 
         const numberToWords = (num) => {
           if (num === 0) return "Zero MUR only";
-
           const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
           const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-
           const convert = (n) => {
             if (n < 20) return ones[n];
             if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + ones[n % 10] : "");
@@ -856,16 +815,12 @@
             if (n < 1000000000) return convert(Math.floor(n / 1000000)) + " Million" + (n % 1000000 !== 0 ? " " + convert(n % 1000000) : "");
             return "";
           };
-
           const intPart = Math.floor(num);
           const decimalPart = Math.round((num - intPart) * 100);
-
           let words = convert(intPart);
-
           if (decimalPart > 0) {
             words += " and " + convert(decimalPart) + " Cents";
           }
-
           return words ? words + " MUR only" : "";
         };
 
@@ -902,7 +857,7 @@
         };
 
         const handleDownloadPDF = async () => {
-          const element = document.getElementById("invoice-render");
+          const element = document.getElementById("quotation-render");
           const canvas = await html2canvas(element, {
             scale: 2,
             useCORS: true,
@@ -913,9 +868,8 @@
           const pdf = new jsPDF("p", "mm", "a4");
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
           pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`Invoice_${invoiceMetadata.value.invoiceNo}.pdf`);
+          pdf.save(`Quotation_${quotationMetadata.value.quotationNo}.pdf`);
         };
 
         const formatNumber = (num, decimals = 0) => {
@@ -936,7 +890,7 @@
         };
 
         return {
-          invoiceMetadata,
+          quotationMetadata,
           clientInfo,
           businessInfo,
           items,
