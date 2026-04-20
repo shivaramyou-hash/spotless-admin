@@ -18,6 +18,10 @@
   <!-- Vue.js for reactivity -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
   <style>
     :root {
       --primary-blue: #1e3a5f;
@@ -458,6 +462,24 @@
     .conditions-section li {
       margin-bottom: 4px;
       line-height: 1.4;
+    }
+
+    /* Styles for dynamic rich text content */
+    .rich-content ul {
+      list-style-type: disc !important;
+      padding-left: 20px !important;
+      margin: 10px 0 !important;
+    }
+
+    .rich-content ol {
+      list-style-type: decimal !important;
+      padding-left: 20px !important;
+      margin: 10px 0 !important;
+    }
+
+    .rich-content li {
+      display: list-item !important;
+      margin-bottom: 4px !important;
     }
 
     .bank-details-section {
@@ -923,6 +945,14 @@
             </div>
 
             <div class="form-group">
+              <div class="flex-header">
+                <h3>Quotation Conditions</h3>
+                <button class="btn-default" @click="setDefaultConditions">Default</button>
+              </div>
+              <div id="editor-container" style="height: 250px; background: white; border-radius: 6px; border: 1px solid var(--table-border);"></div>
+            </div>
+
+            <div class="form-group">
               <h3>VAT & Totals</h3>
               <label>VAT Rate (%)</label>
               <input type="number" v-model.number="vatRate" />
@@ -1074,17 +1104,7 @@
               <div class="terms-page" id="quotation-page-2">
                 <div class="conditions-section">
                   <h4>CONDITIONS</h4>
-                  <p>In case of acceptance of offer:</p>
-                  <ul>
-                    <li>Please note payment should be done by the 28th of every month into the company account below
-                    </li>
-                    <li>Electricity points and water points should be made available and accessible by client.</li>
-                    <li>Upon completion of cleaning operations, client's representative should be on site to check work
-                      effect</li>
-                    <li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS
-                      MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li>
-                    <li>The quotation is valid for a period of 15 days.</li>
-                  </ul>
+                  <div v-html="displayConditions" class="rich-content"></div>
                 </div>
 
                 <div class="bank-details-section">
@@ -1153,7 +1173,9 @@
   </div>
 
   <script>
-    const { createApp, ref, computed, watch } = Vue;
+    const { createApp, ref, computed, watch, onMounted } = Vue;
+
+    const DEFAULT_CONDITIONS = `<p>In case of acceptance of offer:</p><ul><li>Please note payment should be done by the 28th of every month into the company account below</li><li>Electricity points and water points should be made available and accessible by client.</li><li>Upon completion of cleaning operations, client's representative should be on site to check work effect</li><li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li><li>The quotation is valid for a period of 15 days.</li></ul>`;
 
     createApp({
       setup() {
@@ -1193,6 +1215,35 @@
         const totalInWords = ref("");
         const showAcceptanceForm = ref(true);
         const acceptanceAmount = ref(0);
+        const conditions = ref("");
+        let quillInstance = null;
+
+        onMounted(() => {
+          quillInstance = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+              toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['clean']
+              ]
+            }
+          });
+
+          // Set initial content
+          quillInstance.root.innerHTML = conditions.value;
+
+          // Update Vue Ref on change
+          quillInstance.on('text-change', () => {
+            conditions.value = quillInstance.root.innerHTML;
+          });
+        });
+
+        const displayConditions = computed(() => {
+          // If empty or only empty tags, show default
+          const stripped = conditions.value.replace(/<[^>]*>/g, '').trim();
+          return stripped ? conditions.value : DEFAULT_CONDITIONS;
+        });
 
         const totals = computed(() => {
           const subtotal = items.value.reduce(
@@ -1228,6 +1279,13 @@
         watch(() => totals.value.totalPayable, (newTotal) => {
           totalInWords.value = numberToWords(newTotal);
         }, { immediate: true });
+
+        const setDefaultConditions = () => {
+          conditions.value = DEFAULT_CONDITIONS;
+          if (quillInstance) {
+            quillInstance.root.innerHTML = DEFAULT_CONDITIONS;
+          }
+        };
 
         const addItem = () => {
           items.value.push({ id: Date.now(), desc: "", qty: 1, unitPrice: 0 });
@@ -1349,12 +1407,15 @@
           addItem,
           removeItem,
           setDefaultBusiness,
+          setDefaultConditions,
           handleLogout,
           handlePrint,
           handleDownloadPDF,
           formatNumber,
           formatDate,
           acceptanceAmount,
+          conditions,
+          displayConditions
         };
       },
     }).mount("#app");
