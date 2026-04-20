@@ -489,17 +489,6 @@
     }
 
     /* Acceptance Form Styles */
-    /* Page Break Prevention */
-    .invoice-table tr,
-    .summary-container,
-    .conditions-section,
-    .bank-details-section,
-    .acceptance-form,
-    .terms-page {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
     .acceptance-title {
       text-align: center;
       font-weight: 800;
@@ -656,6 +645,120 @@
       font-size: 20px;
     }
 
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+      .editor-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-bar {
+        margin: 16px 0;
+        gap: 12px;
+      }
+
+      .header-bar h1 {
+        font-size: 1.8rem;
+      }
+
+      .tabs-bar {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        gap: 8px;
+      }
+
+      .tab-btn {
+        padding: 8px 14px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .editor-sidebar {
+        padding: 20px 0;
+      }
+
+      .editor-sidebar h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .editor-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .preview-container {
+        padding: 20px 10px;
+        overflow-x: auto;
+      }
+
+      #printable-quotation {
+        margin: 0;
+        /* Container allows horizontal scroll for the A4 document */
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        padding: 10px 16px;
+      }
+
+      .btn {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .logout-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .qty-price {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .qty-price>div {
+        width: 100%;
+      }
+
+      .invoice-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .invoice-info {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .invoice-info strong,
+      .invoice-info span {
+        text-align: center;
+      }
+
+      .info-grid,
+      .billing-section,
+      .signature-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
     @media print {
       .no-print {
         display: none !important;
@@ -666,14 +769,26 @@
       }
 
       .preview-container {
-        padding: 0;
-        background: none;
+        padding: 0 !important;
+        background: none !important;
+        overflow: visible !important;
       }
 
-      .invoice-container {
-        box-shadow: none;
-        width: 100%;
-        padding: 0;
+      .invoice-container,
+      .terms-page,
+      .acceptance-form {
+        box-shadow: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20mm 15mm !important;
+        /* Standard print margins */
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
+
+      .terms-page,
+      .acceptance-form {
+        page-break-before: always;
       }
     }
   </style>
@@ -725,17 +840,25 @@
 
               <div class="qty-price">
                 <div style="flex: 1">
-                  <label>Phone</label>
+                  <label>Phone (Mobile)</label>
                   <input type="text" v-model="businessInfo.phone" />
                 </div>
+                <div style="flex: 1">
+                  <label>Telephone (Landline)</label>
+                  <input type="text" v-model="businessInfo.telephone" />
+                </div>
+              </div>
+
+              <div class="qty-price" style="margin-top: 15px;">
                 <div style="flex: 1">
                   <label>Email</label>
                   <input type="text" v-model="businessInfo.email" />
                 </div>
+                <div style="flex: 1">
+                  <label>Website</label>
+                  <input type="text" v-model="businessInfo.website" />
+                </div>
               </div>
-
-              <label style="margin-top: 15px;">Website</label>
-              <input type="text" v-model="businessInfo.website" />
 
               <div class="qty-price">
                 <div style="flex: 1">
@@ -806,10 +929,16 @@
 
               <label>Total in Words</label>
               <input type="text" v-model="totalInWords" />
-
+            </div>
+            <div class="form-group">
               <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
                 <input type="checkbox" v-model="showAcceptanceForm" style="width: auto; margin: 0;">
                 <label style="margin: 0;">Include Client Acceptance Form</label>
+              </div>
+
+              <div v-if="showAcceptanceForm" style="margin-top: 15px;">
+                <label>Amount for Acceptance Form (MUR)</label>
+                <input type="number" v-model.number="acceptanceAmount" placeholder="Enter amount for form">
               </div>
             </div>
           </div>
@@ -844,6 +973,7 @@
                     <p><strong>{{ businessInfo.name }}</strong></p>
                     <p>Address: {{ businessInfo.address }}</p>
                     <p>Phone: {{ businessInfo.phone }}</p>
+                    <p v-if="businessInfo.telephone">Telephone: {{ businessInfo.telephone }}</p>
                     <p>Email: {{ businessInfo.email }}</p>
                     <p>Website: {{ businessInfo.website }}</p>
                     <p>BRN: {{ businessInfo.brn }}</p>
@@ -946,7 +1076,8 @@
                   <h4>CONDITIONS</h4>
                   <p>In case of acceptance of offer:</p>
                   <ul>
-                    <li>Please note payment should be done by the 28th of every month into the company account below</li>
+                    <li>Please note payment should be done by the 28th of every month into the company account below
+                    </li>
                     <li>Electricity points and water points should be made available and accessible by client.</li>
                     <li>Upon completion of cleaning operations, client's representative should be on site to check work
                       effect</li>
@@ -985,7 +1116,7 @@
                 <span class="dotted-line">{{ clientInfo.name ||
                   '................................................................' }}</span>
                 hereby accept to proceed with daily cleaning services as per above conditions and rate
-                <strong>Rs. {{ formatNumber(totals.subtotal) }}</strong> vat exclusive
+                <strong>Rs. {{ formatNumber(acceptanceAmount || totals.subtotal) }}</strong> vat exclusive
               </div>
 
               <div class="signature-grid">
@@ -1041,11 +1172,12 @@
         const businessInfo = ref({
           name: "Spotless Mauritius",
           address: "239 Palma Road, Quatre Bornes, Mauritius",
-          phone: "+230 5705 7240",
+          phone: "+230 4254040",
+          telephone: "+230 5705 7240, +230 5705 7260",
           email: "info@spotlessmauritius.com",
           website: "www.spotlessmauritius.com",
-          brn: "F12345678",
-          vatReg: "VAT12345678",
+          brn: "C25216752",
+          vatReg: "VAT28348175",
         });
 
         const items = ref([
@@ -1060,6 +1192,7 @@
         const vatRate = ref(15);
         const totalInWords = ref("");
         const showAcceptanceForm = ref(true);
+        const acceptanceAmount = ref(0);
 
         const totals = computed(() => {
           const subtotal = items.value.reduce(
@@ -1108,11 +1241,12 @@
           businessInfo.value = {
             name: "Spotless Mauritius",
             address: "239 Palma Road, Quatre Bornes, Mauritius",
-            phone: "+230 5705 7240",
+            phone: "+230 4254040",
+            telephone: "+230 5705 7240, +230 5705 7260",
             email: "info@spotlessmauritius.com",
             website: "www.spotlessmauritius.com",
-            brn: "F12345678",
-            vatReg: "VAT12345678",
+            brn: "C25216752",
+            vatReg: "VAT28348175",
           };
         };
 
@@ -1167,10 +1301,13 @@
             const container = document.getElementById("printable-quotation");
             container.classList.add("pdf-capture-mode");
 
-            // 1. Capture Quotation Body Flow (Quote + Terms together)
-            await addSectionToPdf("quotation-body-flow", false);
-            
-            // 2. Capture Acceptance Form (Strictly start on next page)
+            // 1. Capture Main Quotation (Page 1)
+            await addSectionToPdf("quotation-page-1", false);
+
+            // 2. Capture Terms & Bank Details (Page 2)
+            await addSectionToPdf("quotation-page-2", true);
+
+            // 3. Capture Acceptance Form (Page 3)
             if (showAcceptanceForm.value) {
               await addSectionToPdf("quotation-page-3", true);
             }
@@ -1217,6 +1354,7 @@
           handleDownloadPDF,
           formatNumber,
           formatDate,
+          acceptanceAmount,
         };
       },
     }).mount("#app");

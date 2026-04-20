@@ -493,6 +493,157 @@
       flex: 1;
     }
 
+    /* PDF Capture Mode - Forces Desktop Layout on Mobile */
+    .pdf-capture-mode {
+      width: 210mm !important;
+      min-height: 297mm !important;
+      padding: 40px !important;
+      margin: 0 !important;
+      background: white !important;
+      box-shadow: none !important;
+    }
+
+    .pdf-capture-mode .invoice-header {
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      align-items: flex-start !important;
+      text-align: left !important;
+    }
+
+    .pdf-capture-mode .invoice-info {
+      display: grid !important;
+      grid-template-columns: auto auto !important;
+      justify-content: end !important;
+      text-align: left !important;
+    }
+
+    .pdf-capture-mode .info-grid,
+    .pdf-capture-mode .billing-section {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 20px !important;
+    }
+
+    .pdf-capture-mode .preview-container {
+      padding: 0 !important;
+      background: white !important;
+      display: block !important;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+      .editor-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-bar {
+        margin: 16px 0;
+        gap: 12px;
+      }
+
+      .header-bar h1 {
+        font-size: 1.8rem;
+      }
+
+      .tabs-bar {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        gap: 8px;
+      }
+
+      .tab-btn {
+        padding: 8px 14px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .editor-sidebar {
+        padding: 20px 0;
+      }
+
+      .editor-sidebar h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .editor-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .preview-container {
+        padding: 20px 10px;
+        overflow-x: auto;
+        justify-content: flex-start;
+      }
+
+      .invoice-container {
+        margin: 0;
+        /* Container allows horizontal scroll for the A4 document */
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        padding: 10px 16px;
+      }
+
+      .btn {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .logout-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .qty-price {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .qty-price>div {
+        width: 100%;
+      }
+
+      .invoice-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .invoice-info {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .invoice-info strong,
+      .invoice-info span {
+        text-align: center;
+      }
+
+      .info-grid,
+      .billing-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
     @media print {
       .no-print {
         display: none !important;
@@ -564,17 +715,25 @@
 
               <div class="qty-price">
                 <div style="flex: 1">
-                  <label>Phone</label>
+                  <label>Phone (Mobile)</label>
                   <input type="text" placeholder="Phone" v-model="businessInfo.phone" />
                 </div>
+                <div style="flex: 1">
+                  <label>Telephone (Landline)</label>
+                  <input type="text" placeholder="Telephone" v-model="businessInfo.telephone" />
+                </div>
+              </div>
+
+              <div class="qty-price" style="margin-top: 15px;">
                 <div style="flex: 1">
                   <label>Email</label>
                   <input type="text" placeholder="Email" v-model="businessInfo.email" />
                 </div>
+                <div style="flex: 1">
+                  <label>Website</label>
+                  <input type="text" placeholder="Website" v-model="businessInfo.website" />
+                </div>
               </div>
-
-              <label style="margin-top: 15px;">Website</label>
-              <input type="text" placeholder="Website" v-model="businessInfo.website" />
 
               <div class="qty-price">
                 <div style="flex: 1">
@@ -680,6 +839,7 @@
                 <p><strong>{{ businessInfo.name }}</strong></p>
                 <p>Address: {{ businessInfo.address }}</p>
                 <p>Phone: {{ businessInfo.phone }}</p>
+                <p v-if="businessInfo.telephone">Telephone: {{ businessInfo.telephone }}</p>
                 <p>Email: {{ businessInfo.email }}</p>
                 <p>Website: {{ businessInfo.website }}</p>
                 <p>BRN: {{ businessInfo.brn }}</p>
@@ -813,11 +973,12 @@
         const businessInfo = ref({
           name: "Spotless Mauritius",
           address: "239 Palma Road, Quatre Bornes, Mauritius",
-          phone: "+230 5705 7240",
+          phone: "+230 4254040",
+          telephone: "+230 5705 7240, +230 5705 7260",
           email: "info@spotlessmauritius.com",
           website: "www.spotlessmauritius.com",
-          brn: "F12345678",
-          vatReg: "VAT12345678",
+          brn: "C25216752",
+          vatReg: "VAT28348175",
         });
 
         const items = ref([
@@ -885,11 +1046,12 @@
           businessInfo.value = {
             name: "Spotless Mauritius",
             address: "239 Palma Road, Quatre Bornes, Mauritius",
-            phone: "+230 5705 7240",
+            phone: "+230 4254040",
+            telephone: "+230 5705 7240, +230 5705 7260",
             email: "info@spotlessmauritius.com",
             website: "www.spotlessmauritius.com",
-            brn: "F12345678",
-            vatReg: "VAT12345678",
+            brn: "C25216752",
+            vatReg: "VAT28348175",
           };
         };
 
@@ -903,19 +1065,30 @@
 
         const handleDownloadPDF = async () => {
           const element = document.getElementById("invoice-render");
-          const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-          });
-          const imgData = canvas.toDataURL("image/png");
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF("p", "mm", "a4");
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`Invoice_${invoiceMetadata.value.invoiceNo}.pdf`);
+          // Toggle capture mode for high-quality mobile PDF
+          element.classList.add("pdf-capture-mode");
+
+          try {
+            const canvas = await html2canvas(element, {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+              backgroundColor: "#ffffff",
+              windowWidth: 1122 // Force desktop layout width
+            });
+
+            const imgData = canvas.toDataURL("image/png");
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("p", "mm", "a4");
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Invoice_${invoiceMetadata.value.invoiceNo}.pdf`);
+          } finally {
+            element.classList.remove("pdf-capture-mode");
+          }
         };
 
         const formatNumber = (num, decimals = 0) => {
