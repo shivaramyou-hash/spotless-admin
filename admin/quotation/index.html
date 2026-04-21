@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spotless Mauritius - Quotation Generator</title>
+  <title>SPOTLESS MAURITIUS CONTRACTING LTD - Quotation Generator</title>
 
   <!-- Google Fonts -->
   <link
@@ -269,11 +269,6 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 40px;
-    }
-
-    .logo-section {
-      display: flex;
-      flex-direction: column;
     }
 
     .logo-section img {
@@ -949,7 +944,9 @@
                 <h3>Quotation Conditions</h3>
                 <button class="btn-default" @click="setDefaultConditions">Default</button>
               </div>
-              <div id="editor-container" style="height: 250px; background: white; border-radius: 6px; border: 1px solid var(--table-border);"></div>
+              <div id="editor-container"
+                style="height: 250px; background: white; border-radius: 6px; border: 1px solid var(--table-border);">
+              </div>
             </div>
 
             <div class="form-group">
@@ -967,8 +964,41 @@
               </div>
 
               <div v-if="showAcceptanceForm" style="margin-top: 15px;">
+                <label>Representative Name</label>
+                <input type="text" v-model="acceptanceRepresentative" placeholder="e.g. Mr. John Doe">
+
+                <label>Service Description (for form)</label>
+                <input type="text" v-model="acceptanceService" placeholder="e.g. daily cleaning services">
+
                 <label>Amount for Acceptance Form (MUR)</label>
                 <input type="number" v-model.number="acceptanceAmount" placeholder="Enter amount for form">
+
+                <div class="qty-price">
+                  <div style="flex: 1">
+                    <label>Signer 1 Title</label>
+                    <input type="text" v-model="acceptanceSignerTitle1">
+                  </div>
+                  <div style="flex: 1">
+                    <label>Signer 2 Title</label>
+                    <input type="text" v-model="acceptanceSignerTitle2">
+                  </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                  <label>Company (Represented)</label>
+                  <input type="text" v-model="acceptanceCompany" placeholder="e.g. Acme Corp">
+                </div>
+
+                <div class="qty-price" style="margin-top: 15px;">
+                  <div style="flex: 1">
+                    <label>Signer 1 Name</label>
+                    <input type="text" v-model="acceptanceSignerName1">
+                  </div>
+                  <div style="flex: 1">
+                    <label>Signer 2 Name</label>
+                    <input type="text" v-model="acceptanceSignerName2">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1132,16 +1162,20 @@
               </div>
 
               <div class="acceptance-body">
-                I <span class="dotted-line"></span> representative of
-                <span class="dotted-line">{{ clientInfo.name ||
+                I <span class="dotted-line">{{ acceptanceRepresentative ||
+                  '................................................................' }}</span> representative of
+                <span class="dotted-line">{{ acceptanceCompany || clientInfo.name ||
                   '................................................................' }}</span>
-                hereby accept to proceed with daily cleaning services as per above conditions and rate
+                hereby accept to proceed with {{ acceptanceService }} as per above conditions and rate
                 <strong>Rs. {{ formatNumber(acceptanceAmount || totals.subtotal) }}</strong> vat exclusive
               </div>
 
               <div class="signature-grid">
                 <div class="sig-block">
-                  <h4>APPROVED BY:</h4>
+                  <h4>{{ acceptanceSignerTitle1 }}:</h4>
+                  <div class="sig-line">
+                    NAME: <div class="sig-field">{{ acceptanceSignerName1 }}</div>
+                  </div>
                   <div class="sig-line">
                     SIGNATURE: <div class="sig-field"></div>
                   </div>
@@ -1151,7 +1185,10 @@
                 </div>
 
                 <div class="sig-block">
-                  <h4>CERTIFIED BY:</h4>
+                  <h4>{{ acceptanceSignerTitle2 }}:</h4>
+                  <div class="sig-line">
+                    NAME: <div class="sig-field">{{ acceptanceSignerName2 }}</div>
+                  </div>
                   <div class="sig-line">
                     SIGNATURE: <div class="sig-field"></div>
                   </div>
@@ -1175,7 +1212,7 @@
   <script>
     const { createApp, ref, computed, watch, onMounted } = Vue;
 
-    const DEFAULT_CONDITIONS = `<p>In case of acceptance of offer:</p><ul><li>Please note payment should be done by the 28th of every month into the company account below</li><li>Electricity points and water points should be made available and accessible by client.</li><li>Upon completion of cleaning operations, client's representative should be on site to check work effect</li><li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS MAURITIUS does not take any responsibility for re-cleaning after this period of time.</li><li>The quotation is valid for a period of 15 days.</li></ul>`;
+    const DEFAULT_CONDITIONS = `<p>In case of acceptance of offer:</p><ul><li>Please note payment should be done by the 28th of every month into the company account below</li><li>Electricity points and water points should be made available and accessible by client.</li><li>Upon completion of cleaning operations, client's representative should be on site to check work effect</li><li>All complaints (if any) should reach our office 24 hours after completion of work and SPOTLESS MAURITIUS CONTRACTING LTD does not take any responsibility for re-cleaning after this period of time.</li><li>The quotation is valid for a period of 15 days.</li></ul>`;
 
     createApp({
       setup() {
@@ -1192,10 +1229,10 @@
         });
 
         const businessInfo = ref({
-          name: "Spotless Mauritius",
+          name: "SPOTLESS MAURITIUS CONTRACTING LTD",
           address: "239 Palma Road, Quatre Bornes, Mauritius",
-          phone: "+230 4254040",
-          telephone: "+230 5705 7240, +230 5705 7260",
+          phone: "+230 5705 7240, +230 5705 7260",
+          telephone: "+230 4254040",
           email: "info@spotlessmauritius.com",
           website: "www.spotlessmauritius.com",
           brn: "C25216752",
@@ -1215,6 +1252,13 @@
         const totalInWords = ref("");
         const showAcceptanceForm = ref(true);
         const acceptanceAmount = ref(0);
+        const acceptanceRepresentative = ref("");
+        const acceptanceService = ref("daily cleaning services");
+        const acceptanceSignerTitle1 = ref("APPROVED BY");
+        const acceptanceSignerTitle2 = ref("CERTIFIED BY");
+        const acceptanceCompany = ref("");
+        const acceptanceSignerName1 = ref("");
+        const acceptanceSignerName2 = ref("");
         const conditions = ref("");
         let quillInstance = null;
 
@@ -1297,10 +1341,10 @@
 
         const setDefaultBusiness = () => {
           businessInfo.value = {
-            name: "Spotless Mauritius",
+            name: "SPOTLESS MAURITIUS CONTRACTING LTD",
             address: "239 Palma Road, Quatre Bornes, Mauritius",
-            phone: "+230 4254040",
-            telephone: "+230 5705 7240, +230 5705 7260",
+            phone: "+230 5705 7240, +230 5705 7260",
+            telephone: "+230 4254040",
             email: "info@spotlessmauritius.com",
             website: "www.spotlessmauritius.com",
             brn: "C25216752",
@@ -1414,6 +1458,13 @@
           formatNumber,
           formatDate,
           acceptanceAmount,
+          acceptanceRepresentative,
+          acceptanceService,
+          acceptanceSignerTitle1,
+          acceptanceSignerTitle2,
+          acceptanceCompany,
+          acceptanceSignerName1,
+          acceptanceSignerName2,
           conditions,
           displayConditions
         };
