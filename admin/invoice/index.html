@@ -745,6 +745,22 @@
                   <input type="text" placeholder="VAT Reg No" v-model="businessInfo.vatReg" />
                 </div>
               </div>
+              <div class="form-group" style="margin-top: 15px;">
+                <div class="qty-price">
+                  <div style="flex: 1">
+                    <label>Bank Name</label>
+                    <input type="text" placeholder="Bank Name" v-model="businessInfo.bankName" />
+                  </div>
+                  <div style="flex: 1">
+                    <label>Account Name</label>
+                    <input type="text" placeholder="Account Name" v-model="businessInfo.accountName" />
+                  </div>
+                </div>
+                <div style="margin-top: 15px;">
+                  <label>Account No</label>
+                  <input type="text" placeholder="Account No" v-model="businessInfo.accountNo" />
+                </div>
+              </div>
             </div>
 
             <!-- Invoice Details -->
@@ -937,12 +953,12 @@
 
             <div class="invoice-footer">
               <div class="payment-methods">
-                <strong>Payment Methods:</strong> Bank Transfer, Check
+                <strong>Payment Methods:</strong> Bank Transfer, Cheque
               </div>
               <div class="bank-details">
-                <strong>Bank Details:</strong> MCB Bank,
-                <strong>Account Name:</strong> Spotless Mauritius Contracting Ltd,
-                <strong>Account No:</strong> [Account Number]
+                <strong>Bank Details:</strong> {{ businessInfo.bankName }},
+                <strong>Account Name:</strong> {{ businessInfo.accountName }},
+                <strong>Account No:</strong> {{ businessInfo.accountNo }}
               </div>
               <div class="thank-you">Thank you for your business!</div>
             </div>
@@ -979,6 +995,9 @@
           website: "www.spotlessmauritius.com",
           brn: "C25216752",
           vatReg: "VAT28348175",
+          accountNo: "000453727611",
+          bankName: "MCB Bank",
+          accountName: "Spotless Mauritius Contracting Ltd",
         });
 
         const items = ref([
@@ -1052,6 +1071,9 @@
             website: "www.spotlessmauritius.com",
             brn: "C25216752",
             vatReg: "VAT28348175",
+            accountNo: "000453727611",
+            bankName: "MCB Bank",
+            accountName: "Spotless Mauritius Contracting Ltd",
           };
         };
 
