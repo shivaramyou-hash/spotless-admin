@@ -280,7 +280,7 @@
 
     .logo-section img {
       height: 80px;
-      width: auto;
+      width: 220px;
       margin-bottom: 10px;
       object-fit: contain;
     }
@@ -1103,10 +1103,26 @@
             const imgData = canvas.toDataURL("image/png");
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF("p", "mm", "a4");
+
             const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            let heightLeft = pdfHeight;
+            let position = 0;
+
+            // Add first page
+            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+
+            // Add additional pages if content exceeds A4 height (with a small 1px tolerance)
+            while (heightLeft > 1) {
+              position = position - pageHeight;
+              pdf.addPage();
+              pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+              heightLeft -= pageHeight;
+            }
+
             pdf.save(`Invoice_${invoiceMetadata.value.invoiceNo}.pdf`);
           } finally {
             element.classList.remove("pdf-capture-mode");
