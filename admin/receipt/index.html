@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPOTLESS MAURITIUS CONTRACTING LTD - VAT Invoice Generator</title>
+  <title>SPOTLESS MAURITIUS CONTRACTING LTD - VAT Receipt Generator</title>
 
   <!-- Google Fonts -->
   <link
@@ -69,7 +69,7 @@
     .subtitle {
       font-size: 0.95rem;
       color: #6b7280;
-      marginTop: 6px;
+      margin-top: 6px;
     }
 
     .tabs-bar {
@@ -168,7 +168,8 @@
     }
 
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 10px 14px;
       border: 1px solid var(--table-border);
@@ -181,7 +182,8 @@
     }
 
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: var(--accent-blue);
       background: white;
@@ -264,6 +266,7 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     /* Original Invoice Component Styles */
@@ -457,6 +460,27 @@
       font-weight: 600;
     }
 
+    /* Paid Stamp Styling */
+    .paid-stamp {
+      position: absolute;
+      top: 160px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-12deg);
+      border: 6px double #38a169;
+      color: #38a169;
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 10px 30px;
+      border-radius: 12px;
+      opacity: 0.85;
+      letter-spacing: 4px;
+      pointer-events: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 15px rgba(56, 161, 105, 0.1);
+    }
+
     .btn {
       padding: 14px;
       border-radius: 8px;
@@ -583,7 +607,6 @@
 
       .invoice-container {
         margin: 0;
-        /* Container allows horizontal scroll for the A4 document */
       }
 
       .action-buttons {
@@ -674,8 +697,8 @@
         <!-- HEADER -->
         <div class="header-bar">
           <div>
-            <h1>VAT Invoice</h1>
-            <p class="subtitle">Manage and generate customer invoices</p>
+            <h1>Payment Receipt</h1>
+            <p class="subtitle">Manage and generate customer receipts</p>
           </div>
 
           <div class="header-actions">
@@ -688,16 +711,16 @@
           <a href="/admin/contact/" class="tab-btn"> Contact Us </a>
           <a href="/admin/callback/" class="tab-btn"> Callback </a>
           <a href="/admin/notifications/" class="tab-btn"> Notifications </a>
-          <a href="/admin/invoice/" class="tab-btn active"> Invoice </a>
+          <a href="/admin/invoice/" class="tab-btn"> Invoice </a>
           <a href="/admin/quotation/" class="tab-btn"> Quotation </a>
-          <a href="/admin/receipt/" class="tab-btn"> Receipt </a>
+          <a href="/admin/receipt/" class="tab-btn active"> Receipt </a>
         </div>
       </div>
 
       <div class="app-layout">
         <!-- Editor Section at Top -->
         <div class="editor-sidebar no-print">
-          <h2>Invoice Editor</h2>
+          <h2>Receipt Editor</h2>
 
           <div class="editor-grid">
             <!-- Business Info -->
@@ -764,22 +787,35 @@
               </div>
             </div>
 
-            <!-- Invoice Details -->
+            <!-- Receipt Details -->
             <div class="form-group">
-              <h3>Invoice Details</h3>
-              <label style="margin-top:20px;">Invoice No</label>
-              <input type="text" placeholder="Invoice No" v-model="invoiceMetadata.invoiceNo" />
+              <h3>Receipt Details</h3>
+              <label style="margin-top:20px;">Receipt No</label>
+              <input type="text" placeholder="Receipt No" v-model="receiptMetadata.receiptNo" />
 
               <label>Date</label>
-              <input type="date" v-model="invoiceMetadata.date" />
+              <input type="date" v-model="receiptMetadata.date" />
 
-              <label>Due Date</label>
-              <input type="date" v-model="invoiceMetadata.dueDate" />
+              <label>Payment Method</label>
+              <select v-model="receiptMetadata.paymentMethod">
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Cash">Cash</option>
+                <option value="Juice BY MCB">Juice BY MCB</option>
+              </select>
+
+              <label>Payment Reference / Chq No.</label>
+              <input type="text" placeholder="e.g. TXN1294812 / CHQ 12345" v-model="receiptMetadata.paymentRef" />
+
+              <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" v-model="showPaidStamp" id="chkPaidStamp" style="width: auto; margin: 0;" />
+                <label for="chkPaidStamp" style="margin: 0; cursor: pointer;">Show "PAID" Stamp</label>
+              </div>
             </div>
 
             <!-- Client Info -->
             <div class="form-group">
-              <h3>Client Information</h3>
+              <h3>Received From (Client Info)</h3>
               <label>Client Name</label>
               <input type="text" placeholder="Client Name" v-model="clientInfo.name" />
 
@@ -793,7 +829,7 @@
             <!-- Line Items -->
             <div class="form-group" style="grid-column: span 1;">
               <div class="flex-header">
-                <h3>Line Items</h3>
+                <h3>Received For (Line Items)</h3>
                 <button class="btn-add" @click="addItem">+ Add Item</button>
               </div>
               <div v-for="(item, index) in items" :key="item.id" class="item-row-edit">
@@ -833,21 +869,24 @@
               Download PDF
             </button>
             <button class="btn btn-print full-width" @click="handlePrint">
-              Print Invoice
+              Print Receipt
             </button>
           </div>
         </div>
 
-        <!-- Invoice Preview -->
+        <!-- Receipt Preview -->
         <div class="preview-container">
-          <div class="invoice-container" id="invoice-render">
+          <div class="invoice-container" id="receipt-render">
+            <!-- Paid Stamp -->
+            <div v-if="showPaidStamp" class="paid-stamp">PAID</div>
+
             <div class="invoice-header">
               <div class="logo-section">
                 <img src="../../img/ui/logo2.png" alt="Logo" />
                 <div class="company-name">{{ businessInfo.name }}</div>
               </div>
               <div class="vat-title">
-                <h1>VAT INVOICE</h1>
+                <h1>VAT RECEIPT</h1>
               </div>
             </div>
 
@@ -864,26 +903,26 @@
               </div>
               <div class="invoice-info">
                 <p>
-                  <strong>Invoice No:</strong>
-                  <span>{{ invoiceMetadata.invoiceNo }}</span>
+                  <strong>Receipt No:</strong>
+                  <span>{{ receiptMetadata.receiptNo }}</span>
                 </p>
                 <p>
-                  <strong>Date:</strong> <span>{{ formatDate(invoiceMetadata.date) }}</span>
+                  <strong>Date:</strong> <span>{{ formatDate(receiptMetadata.date) }}</span>
                 </p>
                 <p>
-                  <strong>Payment Terms:</strong>
-                  <span>{{ invoiceMetadata.paymentTerms }}</span>
+                  <strong>Payment Method:</strong>
+                  <span>{{ receiptMetadata.paymentMethod }}</span>
                 </p>
-                <p>
-                  <strong>Due Date:</strong>
-                  <span>{{ formatDate(invoiceMetadata.dueDate) }}</span>
+                <p v-if="receiptMetadata.paymentRef">
+                  <strong>Ref / Chq No:</strong>
+                  <span>{{ receiptMetadata.paymentRef }}</span>
                 </p>
               </div>
             </div>
 
             <div class="billing-section">
               <div class="bill-to">
-                <h3>BILL TO:</h3>
+                <h3>RECEIVED FROM:</h3>
                 <p>{{ clientInfo.name }}</p>
                 <p style="white-space: pre-line">{{ clientInfo.address }}</p>
               </div>
@@ -938,7 +977,7 @@
                     </td>
                   </tr>
                   <tr class="total-row">
-                    <td>TOTAL AMOUNT PAYABLE (MUR)</td>
+                    <td>TOTAL PAID AMOUNT (MUR)</td>
                     <td class="text-right">
                       {{ formatNumber(totals.totalPayable) }}
                     </td>
@@ -954,14 +993,14 @@
 
             <div class="invoice-footer">
               <div class="payment-methods">
-                <strong>Payment Methods:</strong> Bank Transfer, Cheque
+                <strong>Payment Received via:</strong> {{ receiptMetadata.paymentMethod }} <span v-if="receiptMetadata.paymentRef">({{ receiptMetadata.paymentRef }})</span>
               </div>
               <div class="bank-details">
-                <strong>Bank Details:</strong> {{ businessInfo.bankName }},
+                <strong>Company Bank Details (for reference):</strong> {{ businessInfo.bankName }},
                 <strong>Account Name:</strong> {{ businessInfo.accountName }},
                 <strong>Account No:</strong> {{ businessInfo.accountNo }}
               </div>
-              <div class="thank-you">Thank you for your business!</div>
+              <div class="thank-you">Thank you for your payment!</div>
             </div>
           </div>
         </div>
@@ -974,11 +1013,11 @@
 
     createApp({
       setup() {
-        const invoiceMetadata = ref({
-          invoiceNo: "",
+        const receiptMetadata = ref({
+          receiptNo: "",
           date: new Date().toISOString().split('T')[0],
-          paymentTerms: "Net 30 Days",
-          dueDate: "",
+          paymentMethod: "Bank Transfer",
+          paymentRef: "",
         });
 
         const clientInfo = ref({
@@ -1012,6 +1051,7 @@
 
         const vatRate = ref(15);
         const totalInWords = ref("");
+        const showPaidStamp = ref(true);
 
         const totals = computed(() => {
           const subtotal = items.value.reduce(
@@ -1087,7 +1127,7 @@
         };
 
         const handleDownloadPDF = async () => {
-          const element = document.getElementById("invoice-render");
+          const element = document.getElementById("receipt-render");
 
           // Toggle capture mode for high-quality mobile PDF
           element.classList.add("pdf-capture-mode");
@@ -1124,7 +1164,7 @@
               heightLeft -= pageHeight;
             }
 
-            pdf.save(`Invoice_${invoiceMetadata.value.invoiceNo}.pdf`);
+            pdf.save(`Receipt_${receiptMetadata.value.receiptNo}.pdf`);
           } finally {
             element.classList.remove("pdf-capture-mode");
           }
@@ -1148,13 +1188,14 @@
         };
 
         return {
-          invoiceMetadata,
+          receiptMetadata,
           clientInfo,
           businessInfo,
           items,
           vatRate,
           totalInWords,
           totals,
+          showPaidStamp,
           addItem,
           removeItem,
           setDefaultBusiness,
