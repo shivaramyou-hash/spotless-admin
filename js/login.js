@@ -102,7 +102,7 @@ loginForm.addEventListener("submit", async (e) => {
 
   try {
     const res = await fetch(
-      "https://spotless-server.vercel.app/api/start-password-login",
+      `${API_BASE}/api/start-password-login`,
       {
         method: "POST",
         headers: {
@@ -155,7 +155,7 @@ verifyOtpBtn.addEventListener("click", async () => {
 
   try {
     const res = await fetch(
-      "https://spotless-server.vercel.app/api/verify-email-otp",
+      `${API_BASE}/api/verify-email-otp`,
       {
         method: "POST",
         headers: {

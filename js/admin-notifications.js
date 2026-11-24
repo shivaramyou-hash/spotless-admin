@@ -55,7 +55,7 @@ async function loadSettings() {
   const token = localStorage.getItem("admin_token");
   try {
     const res = await fetch(
-      "https://spotless-server.vercel.app/api/notification-settings",
+      `${API_BASE}/api/notification-settings`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ toggle.addEventListener("change", async () => {
   const token = localStorage.getItem("admin_token");
   try {
     const res = await fetch(
-      "https://spotless-server.vercel.app/api/notification-settings",
+      `${API_BASE}/api/notification-settings`,
       {
         method: "POST",
         headers: {
@@ -144,7 +144,7 @@ saveBtn.addEventListener("click", async () => {
   const token = localStorage.getItem("admin_token");
   try {
     const res = await fetch(
-      "https://spotless-server.vercel.app/api/notification-settings",
+      `${API_BASE}/api/notification-settings`,
       {
         method: "POST",
         headers: {
