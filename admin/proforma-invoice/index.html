@@ -371,9 +371,9 @@
 
     .bill-to h3,
     .service-location h3 {
-      font-size: 12px;
+      font-size: 14px;
       text-transform: uppercase;
-      color: var(--text-grey);
+      color: var(--text-dark);
       margin-bottom: 8px;
     }
 
@@ -381,6 +381,7 @@
     .service-location p {
       margin: 2px 0;
       font-size: 14px;
+      color: var(--text-dark);
     }
 
     .invoice-table {
@@ -713,6 +714,24 @@
         padding: 0;
       }
     }
+
+    .invoice-info .client-first > * {
+      margin-top: 16px;
+    }
+
+    .invoice-info span {
+      overflow-wrap: anywhere;
+    }
+
+    /* Stop long client text from widening the columns */
+    .info-grid > * {
+      min-width: 0;
+    }
+
+    .info-grid {
+      border-bottom: 3px solid var(--primary-blue);
+      padding-bottom: 15px;
+    }
   </style>
 </head>
 
@@ -944,19 +963,13 @@
                   <strong>Due Date:</strong>
                   <span>{{ formatDate(invoiceMetadata.dueDate) }}</span>
                 </p>
-              </div>
-            </div>
-
-            <div class="billing-section">
-              <div class="bill-to">
-                <h3>BILL TO:</h3>
-                <p>{{ clientInfo.name }}</p>
-                <p style="white-space: pre-line">{{ clientInfo.address }}</p>
-              </div>
-              <div class="service-location">
-                <h3>SERVICE LOCATION:</h3>
-                <p style="white-space: pre-line">
-                  {{ clientInfo.serviceLocation }}
+                <p class="client-first">
+                  <strong>BILL TO:</strong>
+                  <span style="white-space: pre-line">{{ clientInfo.name }}<br>{{ clientInfo.address }}</span>
+                </p>
+                <p class="client-first">
+                  <strong>SERVICE LOCATION:</strong>
+                  <span style="white-space: pre-line">{{ clientInfo.serviceLocation }}</span>
                 </p>
               </div>
             </div>
