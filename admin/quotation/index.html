@@ -214,8 +214,7 @@
     }
 
     .invoice-container,
-    .terms-page,
-    .acceptance-form {
+    .terms-page {
       background: var(--white);
       width: 210mm;
       margin: 0 auto 50px auto;
@@ -232,7 +231,7 @@
     .summary-container,
     .conditions-section,
     .bank-details-section,
-    .acceptance-form,
+    .acceptance-section,
     .terms-page {
       page-break-inside: avoid;
       break-inside: avoid;
@@ -240,8 +239,7 @@
 
     /* PDF Capture Mode Overrides */
     .pdf-capture-mode .invoice-container,
-    .pdf-capture-mode .terms-page,
-    .pdf-capture-mode .acceptance-form {
+    .pdf-capture-mode .terms-page {
       margin: 0 !important;
       box-shadow: none !important;
       padding: 80px 60px !important;
@@ -259,10 +257,8 @@
       min-height: 297.1mm !important;
     }
 
-    .pdf-capture-mode .acceptance-form {
-      min-height: 297.1mm !important;
-      margin: 0 !important;
-      padding: 80px 60px !important;
+    .acceptance-section {
+      margin-top: 50px;
     }
 
     .invoice-header {
@@ -792,8 +788,7 @@
       }
 
       .invoice-container,
-      .terms-page,
-      .acceptance-form {
+      .terms-page {
         box-shadow: none !important;
         width: 100% !important;
         margin: 0 !important;
@@ -803,8 +798,7 @@
         page-break-inside: avoid;
       }
 
-      .terms-page,
-      .acceptance-form {
+      .terms-page {
         page-break-before: always;
       }
     }
@@ -1023,7 +1017,7 @@
                 <div class="invoice-header">
                   <div class="logo-section">
                     <img src="../../img/ui/logo2.png" alt="Logo" />
-                    <div class="company-name">{{ businessInfo.name }}</div>
+                    <!-- <div class="company-name">{{ businessInfo.name }}</div> -->
                   </div>
                   <div class="vat-title">
                     <h1>QUOTATION</h1>
@@ -1154,55 +1148,55 @@
                     <div>MCBLMUMU</div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <!-- Page 3: Client Acceptance Form -->
-            <div v-if="showAcceptanceForm" class="acceptance-form" id="quotation-page-3">
-              <div class="acceptance-title">
-                CLIENT ACCEPTANCE FORM FOR QUOTATION {{ quotationMetadata.quotationNo }}
-              </div>
+              <!-- Client Acceptance Form (continues on same page) -->
+              <div v-if="showAcceptanceForm" class="acceptance-section">
+                <div class="acceptance-title">
+                  CLIENT ACCEPTANCE FORM FOR QUOTATION {{ quotationMetadata.quotationNo }}
+                </div>
 
-              <div class="acceptance-body">
-                I <span class="dotted-line">{{ acceptanceRepresentative ||
-                  '................................................................' }}</span> representative of
-                <span class="dotted-line">{{ acceptanceCompany || clientInfo.name ||
-                  '................................................................' }}</span>
-                hereby accept to proceed with {{ acceptanceService }} as per above conditions and rate
-                <strong>Rs. {{ formatNumber(acceptanceAmount || totals.subtotal) }}</strong> vat exclusive
-              </div>
+                <div class="acceptance-body">
+                  I <span class="dotted-line">{{ acceptanceRepresentative ||
+                    '................................................................' }}</span> representative of
+                  <span class="dotted-line">{{ acceptanceCompany || clientInfo.name ||
+                    '................................................................' }}</span>
+                  hereby accept to proceed with {{ acceptanceService }} as per above conditions and rate
+                  <strong>Rs. {{ formatNumber(acceptanceAmount || totals.subtotal) }}</strong> vat exclusive
+                </div>
 
-              <div class="signature-grid">
-                <div class="sig-block">
-                  <h4>{{ acceptanceSignerTitle1 }}:</h4>
-                  <div class="sig-line">
-                    NAME: <div class="sig-field">{{ acceptanceSignerName1 }}</div>
+                <div class="signature-grid">
+                  <div class="sig-block">
+                    <h4>{{ acceptanceSignerTitle1 }}:</h4>
+                    <div class="sig-line">
+                      NAME: <div class="sig-field">{{ acceptanceSignerName1 }}</div>
+                    </div>
+                    <div class="sig-line">
+                      SIGNATURE: <div class="sig-field"></div>
+                    </div>
+                    <div class="sig-line">
+                      DATE: <div class="sig-field"></div>
+                    </div>
                   </div>
-                  <div class="sig-line">
-                    SIGNATURE: <div class="sig-field"></div>
-                  </div>
-                  <div class="sig-line">
-                    DATE: <div class="sig-field"></div>
+
+                  <div class="sig-block">
+                    <h4>{{ acceptanceSignerTitle2 }}:</h4>
+                    <div class="sig-line">
+                      NAME: <div class="sig-field">{{ acceptanceSignerName2 }}</div>
+                    </div>
+                    <div class="sig-line">
+                      SIGNATURE: <div class="sig-field"></div>
+                    </div>
+                    <div class="sig-line">
+                      DATE: <div class="sig-field"></div>
+                    </div>
                   </div>
                 </div>
 
-                <div class="sig-block">
-                  <h4>{{ acceptanceSignerTitle2 }}:</h4>
-                  <div class="sig-line">
-                    NAME: <div class="sig-field">{{ acceptanceSignerName2 }}</div>
-                  </div>
-                  <div class="sig-line">
-                    SIGNATURE: <div class="sig-field"></div>
-                  </div>
-                  <div class="sig-line">
-                    DATE: <div class="sig-field"></div>
-                  </div>
+                <div class="acceptance-footer">
+                  <p>Do not hesitate to contact us for further clarifications.</p>
+                  <p class="thank-you-blue">Thank you</p>
                 </div>
               </div>
-
-              <div class="acceptance-footer">
-                <p>Do not hesitate to contact us for further clarifications.</p>
-                <p class="thank-you-blue">Thank you</p>
               </div>
             </div>
           </div>
@@ -1234,7 +1228,8 @@
           name: "SPOTLESS MAURITIUS CONTRACTING LTD",
           address: "239 Palma Road, Quatre Bornes, Mauritius",
           phone: "+230 5705 7240, +230 5705 7260",
-          telephone: "+230 4254040",
+          telephone: "",
+          // telephone: "+230 4254040",
           email: "info@spotlessmauritius.com",
           website: "www.spotlessmauritius.com",
           brn: "C25216752",
@@ -1257,7 +1252,7 @@
         const acceptanceRepresentative = ref("");
         const acceptanceService = ref("daily cleaning services");
         const acceptanceSignerTitle1 = ref("APPROVED BY");
-        const acceptanceSignerTitle2 = ref("CERTIFIED BY");
+        const acceptanceSignerTitle2 = ref("CONFIRMED BY");
         const acceptanceCompany = ref("");
         const acceptanceSignerName1 = ref("");
         const acceptanceSignerName2 = ref("");
@@ -1346,7 +1341,8 @@
             name: "SPOTLESS MAURITIUS CONTRACTING LTD",
             address: "239 Palma Road, Quatre Bornes, Mauritius",
             phone: "+230 5705 7240, +230 5705 7260",
-            telephone: "+230 4254040",
+            telephone: "",
+            // telephone: "+230 4254040",
             email: "info@spotlessmauritius.com",
             website: "www.spotlessmauritius.com",
             brn: "C25216752",
@@ -1408,13 +1404,8 @@
             // 1. Capture Main Quotation (Page 1)
             await addSectionToPdf("quotation-page-1", false);
 
-            // 2. Capture Terms & Bank Details (Page 2)
+            // 2. Capture Terms & Bank Details (Page 2, includes Acceptance Form)
             await addSectionToPdf("quotation-page-2", true);
-
-            // 3. Capture Acceptance Form (Page 3)
-            if (showAcceptanceForm.value) {
-              await addSectionToPdf("quotation-page-3", true);
-            }
 
             container.classList.remove("pdf-capture-mode");
             pdf.save(`Quotation_${quotationMetadata.value.quotationNo}.pdf`);
